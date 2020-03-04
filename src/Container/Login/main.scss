@@ -1,0 +1,19 @@
+.loginWrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 10em;
+  justify-content: center;
+}
+.loginHeading {
+  font-weight: bolder;
+  font-size: 5em;
+}
+.loginRedirectLinks {
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(113, 73, 206) !important;
+}
