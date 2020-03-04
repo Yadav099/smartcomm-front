@@ -9,10 +9,11 @@ interface ITextBox {
 
 //Text box component
 export const TextBox = (prop: ITextBox) => {
+  //internal updater function to update data
   const internalUpdater = (event: any) => {
     prop.updater(event.target.value);
   };
-  // value => prop.updater(value.target.value)
+
   return (
     <div className="loginBoxWrapper">
       <label className="loginLable">{prop.placeHolder} :</label>

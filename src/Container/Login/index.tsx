@@ -8,11 +8,6 @@ interface ILogin {
   employeeEmailId: string;
   password: string;
 }
-// const
-//   companyName: "",
-//   employeeEmailId: "",
-//   password: ""
-// });
 
 export const Login = () => {
   //state to set and reset logindata
@@ -43,7 +38,7 @@ export const Login = () => {
       employeeEmailId: employeeEmailId,
       password: password
     };
-    alert(entry.password);
+    //call api here
   };
 
   return (
