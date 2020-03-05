@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+#color-nav{
+  background-color:#45398B ;
+  color: white;
+}
+.main-signup{
+  flex: center;
+  justify-content: center;
+}
+.row{
+  display: flex;
+  justify-content: center;
+}
