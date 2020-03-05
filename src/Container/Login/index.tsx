@@ -1,7 +1,10 @@
 import React from "react";
 import "./main.scss";
-import { TextBox } from "../../Component/TextBox";
+import { Button } from '../../Component/Button';
 import "bootstrap/dist/css/bootstrap.min.css";
+import { TextBox } from '../../Component/TextBox'
+
+
 // interface for holding login value
 interface ILogin {
   companyName: string;
@@ -51,12 +54,10 @@ export const Login = () => {
         updater={updateEmployeeEmail}
       />
       <TextBox placeHolder={"Password"} updater={updatePassword} />
-
-      <b onClick={() => makeLoginDataObject()}>Button</b>
-
+      <Button onClick={() => makeLoginDataObject()}>submit</Button>
       <section className="loginRedirectLinks">
         <a href="#"> Forgot email ?</a>
-        <a href="#"> Sign Up for Smart Comm.</a>
+        <a href=''> Sign Up for Smart Comm.</a>
       </section>
     </div>
   );
