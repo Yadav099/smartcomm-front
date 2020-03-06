@@ -3,6 +3,7 @@ import "./main.scss";
 import { Nav } from "react-bootstrap";
 import { navBar } from "../../Constant/Constant";
 
+
 interface INavBar {
   id: number;
   mainList: string;
