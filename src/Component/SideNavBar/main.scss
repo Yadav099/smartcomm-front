@@ -2,24 +2,38 @@
   padding: 2em;
   text-align: start;
   font-size: 16px;
-  font-weight: bold;
+  display: flex;
+  width: 15em;
+}
+
+.navbar {
+  display: none;
+}
+li {
+  margin: 1em;
 }
 
 .nav-item:hover {
   cursor: pointer;
-  background-color: cadetblue;
-
-  color: white;
 }
 .sideBarWrapper {
-  width: 20em;
-  height: 100vh;
+  width: fit-content;
+  height: 70em;
   background-color: white;
-  box-shadow: 10px 0 5px -2px gray;
-  min-width: 10em;
+  box-shadow: 8px 0 5px -2px gray;
 }
 .glowIt {
-  border-left: 10px solid black;
-
+  border-left: 10px solid #45398b;
+  color: #45398b;
   background-color: rgb(229, 226, 226);
+}
+
+@media (max-width: 600px) {
+  .nav-item {
+    display: none;
+  }
+  .navbar {
+    display: flex;
+    height: fit-content;
+  }
 }

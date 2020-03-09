@@ -1,38 +1,4 @@
-.filterWrapper {
-  display: flex;
-  justify-content: flex-start;
-  margin: 2em;
-}
-
-.filters,
-.glow {
+.textAreaWrapper {
   display: flex;
   flex-direction: row;
-  padding: 0 2em;
-
-  border-radius: 1px;
-  margin: 0 3em;
-  height: 3em;
-  border-radius: 10px;
-}
-input {
-  margin: auto 5px;
-
-  width: 20px;
-  height: 20px;
-}
-
-.filtersLabel {
-  margin: auto 0;
-  font-weight: bold;
-}
-
-.filtersHeading {
-  font-weight: bold;
-  font-size: x-large;
-  margin: 5px;
-}
-
-.glow {
-  background-color: gray;
 }

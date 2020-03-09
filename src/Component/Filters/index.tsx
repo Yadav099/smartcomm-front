@@ -1,31 +1,82 @@
 import React from "react";
 import "./main.scss";
 import { Filters } from "../../Constant/Constant";
+import {
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  makeStyles,
+  createStyles,
+  Typography
+} from "@material-ui/core";
 
+//to accept the prop from home
 interface IFilter {
   selectFilter: (index: number) => void;
 }
-const Filter = (prop: IFilter) => {
-  const [select, setSelect] = React.useState(0);
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      padding: "1em",
+      height: "fit-content"
+    },
+    filter_wrapper: {
+      display: "flex",
+      flexDirection: "row",
+      marginTop: "1em"
+    },
+    radio_filter: {
+      margin: " 0 3em",
+      fontSize: "1.5em"
+    },
+    filter_label: {
+      display: "flex",
+      justifyContent: "start",
+      fontSize: "1.5em"
+    }
+  })
+);
 
+//filter component used in home container
+const Filter = (prop: IFilter) => {
+  const filterStyle = useStyles();
   return (
-    <form className="filterWrapper">
-      <label className="filtersHeading">Filters:</label>
-      {Filters.map((item: string, index: number) => (
-        <section className={select === index ? "glow" : "filters"}>
-          <input
-            checked={select === index ? true : false}
-            type="radio"
-            name="toggler"
-            onChange={() => {
-              prop.selectFilter(index);
-              setSelect(index);
-            }}
-          />
-          <label className="filtersLabel">{item}</label>
-        </section>
-      ))}
-    </form>
+    <FormControl component="fieldset" className={filterStyle.root}>
+      <div className={filterStyle.filter_label}>
+        <FormLabel className={filterStyle.filter_label}>Filters</FormLabel>
+      </div>
+      <RadioGroup
+        defaultValue={Filters[0]}
+        aria-label="Filtes"
+        name="Filters"
+        className={filterStyle.filter_wrapper}
+      >
+        {/* loop through the constant filter items */}
+        {Filters.map((item: string, index: number) => (
+          <div className="try">
+            <FormControlLabel
+              value={item}
+              control={<Radio />}
+              label={
+                <Typography
+                  style={{
+                    fontSize: "16px",
+                    color: "textSecondary"
+                  }}
+                >
+                  {item}
+                </Typography>
+              }
+              onChange={() => {
+                prop.selectFilter(index);
+              }}
+            />
+          </div>
+        ))}
+      </RadioGroup>
+    </FormControl>
   );
 };
 
