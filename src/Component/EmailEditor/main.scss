@@ -1,0 +1,50 @@
+.emailComponent {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+
+  height: fit-content;
+  margin: 8em auto 0 auto;
+  background-color: blue($color: #000000);
+}
+.email_label {
+  display: flex;
+  justify-content: start;
+  font-size: 1.5em;
+  margin: 0.5em;
+}
+.textArea {
+  width: 20em;
+  height: 20em;
+  border: none;
+}
+.textLabel {
+  padding: 5px;
+}
+
+.textAreaWrapper {
+  box-shadow: 5px 0 15px -4px rgba(31, 73, 125, 0.8),
+    -5px 0 8px -4px rgba(31, 73, 125, 0.8);
+}
+
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1em;
+}
+.previewComponent {
+  width: 40em;
+  height: 43em;
+}
+@media only screen and (max-width: 600px) {
+  .emailComponent {
+    margin: 0;
+  }
+  .textArea {
+    width: 25rem !important;
+    height: 27rem !important;
+  }
+}
+.submitLabel {
+  margin-right: 1em;
+}
