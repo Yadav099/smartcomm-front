@@ -50,23 +50,6 @@ const SideNavBar = (prop: ISideNavBar) => {
           </Nav>
         </Nav>
       </aside>
-      {/* <footer>
-        <div className="bottomNavigation">
-          {navBar.map((item: INavBar, index: number) => (
-            <>
-              <BottomNavigation
-                className={glowSelected(index, glow)}
-                onClick={() => {
-                  selectedOption(index);
-                }}
-              >
-                {/* print the nav bar items */}
-      {/* <b> {item["mainList"]}</b> */}
-      {/* </BottomNavigation>
-            </>
-          ))}
-        </div>
-      </footer> */}
     </>
   );
 };

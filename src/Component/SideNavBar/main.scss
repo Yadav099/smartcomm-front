@@ -1,14 +1,14 @@
 .nav-item {
-  padding: 2em;
+  padding: 0.5em;
   text-align: start;
-  font-size: 16px;
+  font-size: 24px;
   display: flex;
-  width: 15em;
+  width: 20em;
+}
+.nav {
+  flex-direction: column;
 }
 
-.navbar {
-  display: none;
-}
 li {
   margin: 1em;
 }
@@ -20,20 +20,16 @@ li {
   width: fit-content;
   height: 70em;
   background-color: white;
-  box-shadow: 8px 0 5px -2px gray;
+  box-shadow: 5px 0 5px -2px gray;
 }
 .glowIt {
   border-left: 10px solid #45398b;
   color: #45398b;
-  background-color: rgb(229, 226, 226);
+  background-color: #adb5bd4d;
 }
 
 @media (max-width: 600px) {
   .nav-item {
     display: none;
-  }
-  .navbar {
-    display: flex;
-    height: fit-content;
   }
 }

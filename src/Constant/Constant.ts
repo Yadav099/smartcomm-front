@@ -1,5 +1,3 @@
-import { constants } from "buffer";
-
 //constants for nav bar add here
 export const navBar = [
   {
@@ -25,4 +23,5 @@ export const navBar = [
 ];
 
 // constants for filters add here
-export const Filters = ["All Users", "Loyal Users", "Users about to leave"];
+// export const Filters = ["All Users", "Loyal Users", "Users about to leave"];
+export const Filters = ["Email"];

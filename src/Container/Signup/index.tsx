@@ -9,7 +9,15 @@ import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
-import { Paper, withStyles, Grid, TextField, Button, FormControlLabel, Checkbox } from '@material-ui/core';
+import {
+  Paper,
+  withStyles,
+  Grid,
+  TextField,
+  Button,
+  FormControlLabel,
+  Checkbox
+} from "@material-ui/core";
 
 export const Signup = () => {
   const [companyName, updateCompanyName] = React.useState("");
@@ -19,6 +27,14 @@ export const Signup = () => {
   const [employeeID, updateEmployeeID] = React.useState("");
 
   const useStyles = makeStyles(theme => ({
+    title: {
+      flexGrow: 1,
+      display: "flex",
+      justifyContent: "center"
+    },
+    appbar: {
+      backgroundColor: "#45398B"
+    },
     root: {
       "& .MuiTextField-root": {
         margin: theme.spacing(1),
@@ -31,16 +47,13 @@ export const Signup = () => {
   const handleClick = () => {
     console.log("post");
     axios
-      .post(
-        "http://tradenapp-env.us-east-1.elasticbeanstalk.com/api/v1/api-token-auth/",
-        {
-          companyName: companyName,
-          companyMail: companyMail,
-          employeeName: employeeName,
-          employeeID: employeeID,
-          employeeMail: employeeMail
-        }
-      )
+      .post("http://127.0.0.1:5000/signup", {
+        companyName: companyName,
+        companyMail: companyMail,
+        employeeName: employeeName,
+        employeeID: employeeID,
+        employeeMail: employeeMail
+      })
       .then(function(response) {
         console.log(response.status);
         if (response.status === 200) {
@@ -56,18 +69,15 @@ export const Signup = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Navbar
-          className="justify-content-center"
-          id="color-nav"
-          fixed="top"
-          style={{ height: "60px", fontSize: "30px" }}
-        >
-          Smart Comm
-        </Navbar>
-      </Row>
-      
+    <>
+      <AppBar position="static" className={classes.appbar}>
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Smart Comm
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
       <Container className="main-signup">
         <Container className="main-signup">
           <br />
@@ -150,6 +160,6 @@ export const Signup = () => {
           </Button>
         </Row>
       </Container>
-    </Container>
+    </>
   );
 };
