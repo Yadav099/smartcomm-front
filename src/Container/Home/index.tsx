@@ -3,8 +3,14 @@ import "./main.scss";
 import SideNavBar from "../../Component/SideNavBar";
 import AppBar from "@material-ui/core/AppBar";
 
-import { Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
-import { Container } from "react-bootstrap";
+import {
+  Typography,
+  makeStyles,
+  Theme,
+  createStyles,
+  FormLabel
+} from "@material-ui/core";
+import { Container, Row } from "react-bootstrap";
 import EmailEditor from "../../Component/EmailEditor";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -34,7 +40,7 @@ const Home = () => {
   };
 
   return (
-    <Container className={homeStyle.HomeWrapper}>
+    <div className={homeStyle.HomeWrapper}>
       <AppBar className={homeStyle.AppBar} position="static">
         <Typography variant="h6" className={"title"}>
           Smart Comm
@@ -53,7 +59,7 @@ const Home = () => {
           <b>Customer</b>
         )}
       </body>
-    </Container>
+    </div>
   );
 };
 
