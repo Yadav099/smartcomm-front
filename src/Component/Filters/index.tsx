@@ -3,6 +3,7 @@ import "./main.scss";
 import { Filters } from "../../Constant/Constant";
 import {
   FormControl,
+  
   FormLabel,
   RadioGroup,
   FormControlLabel,
@@ -11,7 +12,9 @@ import {
   createStyles,
   Typography,
   Container,
-  TextField
+  TextField, Button,
+  Paper,
+  Divider,
 } from "@material-ui/core";
 import { Row, Col } from "react-bootstrap";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -21,12 +24,15 @@ import InputLabel from "@material-ui/core/InputLabel";
 import { withStyles, Theme } from "@material-ui/core/styles";
 
 import NativeSelect from "@material-ui/core/NativeSelect";
-import InputBase from "@material-ui/core/InputBase";
+import TextareaAutosize from "@material-ui/core/TextareaAutosize";
+import SendIcon from "@material-ui/icons/Send";
 
 //to accept the prop from home
 interface IFilter {
   selectFilter: (index: number) => void;
+  send: (filter: number, content: string) => void;
 }
+
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
@@ -59,12 +65,13 @@ const useStyles = makeStyles(() =>
 );
 
 //filter component used in home container
-const Filter = (prop: IFilter) => {
+const Filter = (prop: any) => {
   const filterStyle = useStyles();
   const [value, setValue] = React.useState<number[]>([0, 100]);
   const [gender, setGender] = React.useState("");
   const [interest, setInterest] = React.useState("");
 
+  
   const handleSliderChange = (event: any, newValue: number | number[]) => {
     setValue(newValue as number[]);
     console.log(newValue);
@@ -95,8 +102,24 @@ const Filter = (prop: IFilter) => {
     console.log(state.checkedB);
     console.log(state.checkedC);
   };
+
+  const [filter, setFilter] = React.useState(0);
+
+  //function to set filter
+  const selectFilter = (index: number) => {
+    setFilter(index);
+  };
+  //state to set email content
+  const [emailContent, setEmailContent] = React.useState("");
+
+  //function to set state of email content on change
+  const emailBody = (event: any) => {
+    setEmailContent(event.target.value);
+  };
   return (
-    <Container>
+    <Paper className="emailComponent" square>
+      <FormControl className="textAreaWrapper">
+      <Container>
       <Row>
         <FormControl component="fieldset" className={filterStyle.root}>
           <div className={filterStyle.filter_label}>
@@ -242,6 +265,38 @@ const Filter = (prop: IFilter) => {
       <br />
       <br />
     </Container>
+        <Divider />
+
+        <FormLabel className="email_label" style={{ fontSize: "2em" }}>
+          Email template
+        </FormLabel>
+        <TextareaAutosize
+          rowsMax={200}
+          style={{ height: "30em", width: "80em", fontSize: "16px" }}
+          className="textArea"
+          aria-label="maximum height"
+          onChange={value => {
+            emailBody(value);
+          }}
+          onKeyDown={value => emailBody(value)}
+        />
+        <Container className="buttonWrapper">
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={() => {
+              prop.send(filter, emailContent);
+            }}
+          >
+            <b className="submitLabel">Send</b>
+            <SendIcon />
+          </Button>
+        </Container>
+      </FormControl>
+    </Paper>
+
+    
   );
 };
 
