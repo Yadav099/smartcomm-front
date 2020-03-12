@@ -18,8 +18,15 @@ import {
   FormControlLabel,
   Checkbox
 } from "@material-ui/core";
+import { Link } from "react-router-dom";
 
-export const Signup = () => {
+import {
+  validateEmployeeEmail,
+  validateCompanyName,
+  validatePssword
+} from "../../Util/Validation";
+
+export const Signup = (prop: any) => {
   const [companyName, updateCompanyName] = React.useState("");
   const [employeeName, updateEmployeeName] = React.useState("");
   const [companyMail, updateCompanyEmail] = React.useState("");
@@ -46,6 +53,7 @@ export const Signup = () => {
 
   const handleClick = () => {
     console.log("post");
+    const { history } = prop;
     axios
       .post("http://127.0.0.1:5000/signup", {
         companyName: companyName,
@@ -56,8 +64,8 @@ export const Signup = () => {
       })
       .then(function(response) {
         console.log(response.status);
-        if (response.status === 200) {
-          alert("success");
+        if (response.status === 200 && response.data === "Succesfull") {
+          history.push("/");
         }
         console.log(response.data);
       })
@@ -67,6 +75,32 @@ export const Signup = () => {
     console.log(companyName);
     console.log("Login Button Pressed");
   };
+
+  ///////validator/////
+
+  const [emailValidation, setEmailValidation] = React.useState(false);
+  const [companyValidation, setCompanyValidation] = React.useState(false);
+  const [companyEmailValidation, setCompanyEmailValidation] = React.useState(
+    false
+  );
+  const [employeeNameValidation, setEmployeeNameValidation] = React.useState(
+    false
+  );
+  const [passwordValidation, setPasswordValidation] = React.useState(false);
+
+  const validate = () => {
+    //  employee email
+    setEmailValidation(validateEmployeeEmail(employeeMail));
+    //company email
+    setCompanyEmailValidation(validateEmployeeEmail(companyMail));
+    //company name
+    setCompanyValidation(validateCompanyName(companyName));
+    //employee id
+    setPasswordValidation(validatePssword(employeeID));
+    //employee name
+    setEmployeeNameValidation(validateCompanyName(employeeName));
+  };
+  //Validator //////
 
   return (
     <>
@@ -96,6 +130,7 @@ export const Signup = () => {
                 label="Company Name"
                 variant="outlined"
                 value={companyName}
+                error={companyValidation}
                 onChange={e => updateCompanyName(e.target.value)}
               />
               <Row></Row>
@@ -104,6 +139,7 @@ export const Signup = () => {
                 label="Company Email"
                 variant="outlined"
                 value={companyMail}
+                error={companyEmailValidation}
                 onChange={e => updateCompanyEmail(e.target.value)}
               />
             </form>
@@ -123,6 +159,7 @@ export const Signup = () => {
                 id="outlined-basic"
                 label="Employee Name"
                 variant="outlined"
+                error={employeeNameValidation}
                 value={employeeName}
                 onChange={e => updateEmployeeName(e.target.value)}
               />
@@ -132,6 +169,7 @@ export const Signup = () => {
                 label="Employee ID"
                 variant="outlined"
                 value={employeeID}
+                error={passwordValidation}
                 onChange={e => updateEmployeeID(e.target.value)}
               />
               <br />
@@ -140,6 +178,7 @@ export const Signup = () => {
                 label="Employee Email"
                 variant="outlined"
                 value={employeeMail}
+                error={emailValidation}
                 onChange={e => updateEmployeeEmail(e.target.value)}
               />
             </form>
@@ -149,7 +188,10 @@ export const Signup = () => {
 
         <Row>
           <Button
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+              validate();
+            }}
             style={{
               width: "10em",
               backgroundColor: "#45398B",
@@ -158,6 +200,10 @@ export const Signup = () => {
           >
             Sign Up
           </Button>
+        </Row>
+        <br />
+        <Row>
+          <Link to="/">Already a user</Link>
         </Row>
       </Container>
     </>

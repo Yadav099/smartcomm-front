@@ -5,7 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 
 import axios from "axios";
-import { Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Paper,
   Grid,
@@ -17,8 +17,10 @@ import {
 
 import {
   validateCompanyName,
-  validateEmployeeEmail
+  validateEmployeeEmail,
+  validatePssword
 } from "../../Util/Validation";
+import { render } from "@testing-library/react";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,18 +64,16 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const Login = () => {
+export const Login = (prop: any) => {
   const classes = useStyles();
   const [companyName, updateCompanyName] = React.useState("");
 
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
-
+  const [route, setRoute] = React.useState("");
   const handleClick = () => {
     console.log("post");
-
-    // const userName = employeeMail;
-
+    const { history } = prop;
     axios
       .post(
         "http://127.0.0.1:5000/login ",
@@ -81,8 +81,8 @@ export const Login = () => {
         { auth: { username: employeeMail, password: password } }
       )
       .then(function(response) {
-        if (response.status === 200 && response.data === "Successful") {
-          alert("yes");
+        if (response.status === 200 && response.data === "Success") {
+          history.push("/Home");
         }
       })
       .catch(function(error) {
@@ -94,9 +94,12 @@ export const Login = () => {
 
   const [emailValidation, setEmailValidation] = React.useState(false);
   const [companyValidation, setCompanyValidation] = React.useState(false);
+  const [passwordValidation, setPasswordValidation] = React.useState(false);
+
   const validate = () => {
     setEmailValidation(validateEmployeeEmail(employeeMail));
     setCompanyValidation(validateCompanyName(companyName));
+    setPasswordValidation(validatePssword(password));
   };
 
   ///////validation ends here//////////////
@@ -163,6 +166,7 @@ export const Login = () => {
                     fullWidth
                     autoFocus
                     required
+                    error={passwordValidation}
                   />
                 </Grid>
               </Grid>
@@ -181,7 +185,16 @@ export const Login = () => {
                     variant="text"
                     color="primary"
                   >
-                    <Link to="/Home"> Forgot password? </Link>
+                    <Link to="/ForgotPassword"> Forgot password? </Link>
+                  </Button>{" "}
+                  <Button
+                    disableFocusRipple
+                    disableRipple
+                    style={{ textTransform: "none" }}
+                    variant="text"
+                    color="primary"
+                  >
+                    <Link to="/Signup"> New user ?? </Link>
                   </Button>
                 </Grid>
               </Grid>

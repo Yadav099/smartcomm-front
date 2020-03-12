@@ -11,7 +11,10 @@ export const validateEmployeeEmail = (email: string) => {
   else return true;
 };
 
-export const validatePssword = (password: string) => {};
+export const validatePssword = (password: string) => {
+  if (password) return false;
+  return true;
+};
 // #     if ($('#company').val().length < 1){
 // #       this.setError("company", "Please enter your company name");
 // #       hasErrors = true;
