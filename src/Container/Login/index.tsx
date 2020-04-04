@@ -70,7 +70,7 @@ export const Login = (prop: any) => {
 
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
-  const [route, setRoute] = React.useState("");
+
   const handleClick = () => {
     console.log("post");
     const { history } = prop;
@@ -81,6 +81,7 @@ export const Login = (prop: any) => {
         { auth: { username: employeeMail, password: password } }
       )
       .then(function(response) {
+        alert(response.data);
         if (response.status === 200 && response.data === "Success") {
           history.push("/Home");
         }

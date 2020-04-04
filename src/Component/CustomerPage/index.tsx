@@ -37,9 +37,6 @@ const useStyles = makeStyles((theme: Theme) =>
       }
     },
     buttonStyle: {
-      width: "10em",
-      backgroundColor: "#45398B",
-      color: "white",
       margin: theme.spacing(1)
     }
   })
@@ -47,32 +44,33 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const CustomerPage = () => {
   const CustomerStyle = useStyles();
-  const [select, setSelected] = React.useState(0);
+  const [select, setSelected] = React.useState(1);
 
   const handleOnClickAdd = () => {
     setSelected(1);
     console.log(select);
   };
-  const handleOnClickUpdate = () => {
-    setSelected(2);
-    console.log(select);
-  };
-  const handleOnClickDelete = () => {
-    setSelected(3);
-    console.log(select);
-  };
+  // const handleOnClickUpdate = () => {
+  //   setSelected(2);
+  //   console.log(select);
+  // };
+  // const handleOnClickDelete = () => {
+  //   setSelected(3);
+  //   console.log(select);
+  // };
 
   return (
     <Container className={CustomerStyle.HomeWrapper}>
       <Row className="justify-content-md-center">
         <Button
           className={CustomerStyle.buttonStyle}
+          style={{ width: "10em", backgroundColor: "#45398B", color: "white" }}
           onClick={handleOnClickAdd}
         >
           Add
         </Button>
 
-        <Button
+        {/* <Button
           className={CustomerStyle.buttonStyle}
           onClick={handleOnClickUpdate}
         >
@@ -84,14 +82,14 @@ export const CustomerPage = () => {
           onClick={handleOnClickDelete}
         >
           Delete
-        </Button>
+        </Button> */}
       </Row>
       <br />
       <br />
       <br />
       {select === 1 && <AddCustomer />}
-      {select === 2 && <UpdateCustomer />}
-      {select === 3 && <DeleteCustomer />}
+      {/* {select === 2 && <UpdateCustomer />}
+      {select === 3 && <DeleteCustomer />} */}
     </Container>
   );
 };

@@ -12,10 +12,10 @@ import {
   Input
 } from "@material-ui/core";
 
+import axios from "axios";
 import { Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
 import { Container, Col } from "react-bootstrap";
 interface data {
-
   name: String;
   age: string;
   sex: String;
@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }
   })
 );
-export const AddCustomer = () => {
+export const AddCustomer = (prop: any) => {
   const Fileds = ["Name", "Age", "sex", "email", "Phone Number", "interest"];
   const classes = useStyles();
   const [name, setName] = React.useState("");
@@ -54,8 +54,7 @@ export const AddCustomer = () => {
   const [phonenumber, setPhoneNumber] = React.useState("");
   const [sex, setSex] = React.useState("");
   const [interest, setInterest] = React.useState("");
-  var jsondata :data[]=[] ;
- 
+  var jsondata: data[] = [];
 
   const handleDataChange = (data: string, e: any) => {
     if (data === "Name") {
@@ -83,6 +82,33 @@ export const AddCustomer = () => {
       console.log(interest);
     }
   };
+
+  const sendFile = (event: any) => {
+    const { history } = prop;
+    // const data = new FormData();
+    // const { file } = values.invitation;
+    // data.append("file", file, file.name);
+
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+
+    axios
+      .post(
+        "http://127.0.0.1:5000/customer/add/CSV",
+        {
+          csv: event.target.value
+        },
+        config
+      )
+      .then(function(response) {
+        alert(response.data);
+        if (response.status === 200) {
+          history.push("/Home");
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  };
   return (
     <Container>
       <Row>
@@ -107,13 +133,23 @@ export const AddCustomer = () => {
       <br />
       <br />
       <Row className="justify-content-md-center">
-      <Button onClick={()=> { 
-          var temp=name;
-          
-          
-          
-          
-          jsondata.push({name:temp,age:age,sex:sex,email:email,phonenumber:phonenumber,interest:interest});console.log(jsondata)}} >submit</Button>
+        <Button
+          onClick={() => {
+            var temp = name;
+
+            jsondata.push({
+              name: temp,
+              age: age,
+              sex: sex,
+              email: email,
+              phonenumber: phonenumber,
+              interest: interest
+            });
+            console.log(jsondata);
+          }}
+        >
+          submit
+        </Button>
       </Row>
       <br />
       <br />
@@ -131,7 +167,16 @@ export const AddCustomer = () => {
       <br />
       <br />
       <Row>
-        <Input name="upload-csv-file" type="file"  />
+        <Input name="upload-csv-file" type="file" />
+      </Row>
+      <Row className="justify-content-md-center">
+        <Button
+          onClick={event => {
+            sendFile(event);
+          }}
+        >
+          submit
+        </Button>
       </Row>
     </Container>
   );

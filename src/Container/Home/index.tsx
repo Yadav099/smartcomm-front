@@ -22,6 +22,7 @@ import { useTheme } from "@material-ui/core/styles";
 import EmailEditor from "../../Component/EmailEditor";
 import { CustomerPage } from "../../Component/CustomerPage";
 import { Link } from "react-router-dom";
+import Filter from "../../Component/Filters";
 const drawerWidth = 260;
 const useStyles = makeStyles(theme => ({
   root: {
