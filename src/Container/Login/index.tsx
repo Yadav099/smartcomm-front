@@ -1,50 +1,55 @@
 import React from "react";
-import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 
+// import of routing and axios api call
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { URL_LINK } from "../../Constant/Constant";
+
+// imports of layouts and styles from bootstrap and material ui
 import {
   Paper,
   Grid,
   TextField,
   Button,
+  Divider,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  createStyles,
+  makeStyles,
+  Theme,
 } from "@material-ui/core";
+import { Container } from "react-bootstrap";
 
+// import for validation of inputs
 import {
   validateCompanyName,
   validateEmployeeEmail,
-  validatePssword
+  validatePssword,
 } from "../../Util/Validation";
-import { render } from "@testing-library/react";
 
+// import for components
+import TopBar from "../../Component/AppBar/index";
+import ForgotPassword from "../../Component/ForgotPassword/index";
+import ForgotMailSent from "../../Component/ForgotMailSent/index";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      margin: theme.spacing(0)
     },
     title: {
       flexGrow: 1,
       display: "flex",
-      justifyContent: "center"
-    },
-    appbar: {
-      backgroundColor: "#45398B"
+      justifyContent: "center",
     },
     company: {
       display: "flex",
       justifyContent: "center",
       flexDirection: "column",
-      width: theme.spacing(50)
+      width: theme.spacing(50),
     },
     textfield: {
       width: "350px",
-      margin: theme.spacing(2)
+      margin: theme.spacing(2),
     },
     paper: {
       padding: theme.spacing(2),
@@ -52,43 +57,71 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.secondary,
       width: theme.spacing(100),
       height: theme.spacing(80),
-      margin: theme.spacing(6)
+      margin: theme.spacing(6),
     },
     margin: {
-      margin: theme.spacing(2)
+      margin: theme.spacing(2),
     },
     padding: {
       padding: theme.spacing(2),
-      width: "500px"
-    }
+      width: "500px",
+      marginTop: "90px",
+      marginLeft: "20px",
+      marginRight: "20px",
+    },
   })
 );
 
 export const Login = (prop: any) => {
   const classes = useStyles();
-  const [companyName, updateCompanyName] = React.useState("");
 
+  // states for handling inputs
+  const [companyName, updateCompanyName] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
 
+  // history  object to handle routing
+  const { history } = prop;
   const handleClick = () => {
     console.log("post");
-    const { history } = prop;
+
+    // axios api call
+    // with authentication header
+    // and company name
     axios
       .post(
-        "http://127.0.0.1:5000/login ",
+        URL_LINK + "login ",
         { companyName: companyName },
-        { auth: { username: employeeMail, password: password } }
+        {
+          auth: { username: employeeMail, password: password },
+        }
       )
-      .then(function(response) {
+      .then(function (response) {
         alert(response.data);
         if (response.status === 200 && response.data === "Success") {
           history.push("/Home");
         }
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
+  };
+
+  //states and call back function to handle forgot password
+  const [showForget, setShowForget] = React.useState(false);
+  const [showEnterCode, setShowEnterCode] = React.useState(true);
+  const updateForget = () => {
+    setShowForget(!showForget);
+    console.log(showForget);
+  };
+  const updateShowEnterCode = () => {
+    setShowEnterCode(!showEnterCode);
+    console.log(showEnterCode);
+  };
+
+  //successful verrification of code
+  const moveToChangePassowrd = () => {
+    history.push("/ChangePassword");
   };
 
   ///////// validation part from here/////////
@@ -105,117 +138,127 @@ export const Login = (prop: any) => {
 
   ///////validation ends here//////////////
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <AppBar position="static" className={classes.appbar}>
-            <Toolbar>
-              <Typography variant="h6" className={classes.title}>
-                Smart Comm
-              </Typography>
-            </Toolbar>
-          </AppBar>
-        </Grid>
-        <Grid container direction="row" justify="center" alignItems="center">
-          <Paper
-            className={classes.padding}
-            style={{
-              marginTop: "90px",
-              marginLeft: "20px",
-              marginRight: "20px"
-            }}
-            elevation={3}
-          >
-            <div className={classes.margin}>
-              <Grid container spacing={8} alignItems="flex-end">
-                <Grid item md={true} sm={true} xs={true}>
-                  <TextField
-                    id="outlined-basic"
-                    label="Company Name"
-                    variant="standard"
-                    value={companyName}
-                    onChange={e => updateCompanyName(e.target.value)}
-                    fullWidth
-                    autoFocus
-                    required
-                    error={companyValidation}
-                  />
+    <>
+      <TopBar />
+      <Container className={classes.root}>
+        <Grid container spacing={3}>
+          <Grid container direction="row" justify="center" alignItems="center">
+            <Paper className={classes.padding} style={{}} elevation={3}>
+              <div className={classes.margin}>
+                <Grid container spacing={8} alignItems="flex-end">
+                  <Grid item md={true} sm={true} xs={true}>
+                    <TextField
+                      id="outlined-basic"
+                      label="Company Name"
+                      variant="standard"
+                      value={companyName}
+                      onChange={(e) => updateCompanyName(e.target.value)}
+                      fullWidth
+                      autoFocus
+                      required
+                      error={companyValidation}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid container spacing={8} alignItems="flex-end">
-                <Grid item md={true} sm={true} xs={true}>
-                  <TextField
-                    label="Employee Email-ID"
-                    variant="standard"
-                    value={employeeMail}
-                    onChange={e => updateEmployeeEmail(e.target.value)}
-                    fullWidth
-                    autoFocus
-                    required
-                    error={emailValidation}
-                  />
+                <Grid container spacing={8} alignItems="flex-end">
+                  <Grid item md={true} sm={true} xs={true}>
+                    <TextField
+                      label="Employee Email-ID"
+                      variant="standard"
+                      value={employeeMail}
+                      onChange={(e) => updateEmployeeEmail(e.target.value)}
+                      fullWidth
+                      autoFocus
+                      required
+                      error={emailValidation}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
 
-              <Grid container spacing={8} alignItems="flex-end">
-                <Grid item md={true} sm={true} xs={true}>
-                  <TextField
-                    label="password"
-                    variant="standard"
-                    value={password}
-                    onChange={e => updatePassword(e.target.value)}
-                    fullWidth
-                    autoFocus
-                    required
-                    error={passwordValidation}
-                  />
+                <Grid container spacing={8} alignItems="flex-end">
+                  <Grid item md={true} sm={true} xs={true}>
+                    <TextField
+                      label="password"
+                      variant="standard"
+                      value={password}
+                      onChange={(e) => updatePassword(e.target.value)}
+                      fullWidth
+                      autoFocus
+                      required
+                      error={passwordValidation}
+                    />
+                  </Grid>
                 </Grid>
-              </Grid>
-              <Grid container alignItems="center" justify="space-between">
-                <Grid item>
-                  <FormControlLabel
-                    control={<Checkbox color="primary" />}
-                    label="Remember me"
-                  />
+                <Grid container alignItems="center" justify="space-between">
+                  <Grid item>
+                    <FormControlLabel
+                      control={<Checkbox color="primary" />}
+                      label="Remember me"
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      disableFocusRipple
+                      disableRipple
+                      style={{ textTransform: "none" }}
+                      variant="text"
+                      color="primary"
+                      onClick={() => {
+                        updateForget();
+                      }}
+                    >
+                      Forgot password?
+                    </Button>
+                    <Button
+                      disableFocusRipple
+                      disableRipple
+                      style={{ textTransform: "none" }}
+                      variant="text"
+                      color="primary"
+                    >
+                      <Link to="/Signup"> New user ?? </Link>
+                    </Button>
+                  </Grid>
                 </Grid>
-                <Grid item>
+                <Grid container justify="center" style={{ marginTop: "10px" }}>
                   <Button
-                    disableFocusRipple
-                    disableRipple
-                    style={{ textTransform: "none" }}
-                    variant="text"
+                    onClick={() => {
+                      handleClick();
+                      validate();
+                    }}
+                    variant="outlined"
                     color="primary"
-                  >
-                    <Link to="/ForgotPassword"> Forgot password? </Link>
-                  </Button>{" "}
-                  <Button
-                    disableFocusRipple
-                    disableRipple
                     style={{ textTransform: "none" }}
-                    variant="text"
-                    color="primary"
                   >
-                    <Link to="/Signup"> New user ?? </Link>
+                    Login
                   </Button>
                 </Grid>
-              </Grid>
-              <Grid container justify="center" style={{ marginTop: "10px" }}>
-                <Button
-                  onClick={() => {
-                    handleClick();
-                    validate();
-                  }}
-                  variant="outlined"
-                  color="primary"
-                  style={{ textTransform: "none" }}
-                >
-                  Login
-                </Button>
-              </Grid>
-            </div>
-          </Paper>
+                {showForget ? (
+                  showEnterCode ? (
+                    <>
+                      <br />
+                      <Divider />
+                      <ForgotPassword
+                        updateShowEnterCode={updateShowEnterCode}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <br />
+                      <Divider />
+                      <ForgotMailSent
+                        moveToChangePassowrd={moveToChangePassowrd}
+                      />
+                    </>
+                  )
+                ) : (
+                  <></>
+                )}
+              </div>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </Container>
+    </>
   );
 };
