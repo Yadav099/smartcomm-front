@@ -10,14 +10,18 @@ const ChangePassword = (prop: any) => {
   const [password, setPassword] = React.useState("");
   const [passwordRepeat, setPasswordRepeat] = React.useState("");
   const { history } = prop;
+
+  React.useEffect(() => {
+    if (localStorage.getItem("changePassword") !== "true") history.push("/");
+  }, [history]);
   const handleChange = () => {
     if (password === passwordRepeat) {
       axios
         .put(URL_LINK + "ChangePassword ", { emp_pass: password })
         .then(function (response) {
           if (response.status === 200) {
-            alert(response.data);
-            // history.push("/");
+            localStorage.removeItem("changePassword");
+            history.push("/");
           }
         })
         .catch(function (error) {

@@ -14,7 +14,7 @@ import {
   TextField,
   Button,
   Paper,
-  Divider
+  Divider,
 } from "@material-ui/core";
 import { Row, Col } from "react-bootstrap";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -26,6 +26,7 @@ import axios from "axios";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import TextareaAutosize from "@material-ui/core/TextareaAutosize";
 import SendIcon from "@material-ui/icons/Send";
+import { URL_LINK } from "../../Constant/Constant";
 
 //to accept the prop from home
 interface IFilter {
@@ -37,30 +38,30 @@ const useStyles = makeStyles(() =>
   createStyles({
     root: {
       padding: "1em",
-      height: "fit-content"
+      height: "fit-content",
     },
     filter_wrapper: {
       display: "flex",
       flexDirection: "row",
-      marginTop: "1em"
+      marginTop: "1em",
     },
     FieldName: {
       display: "flex",
       justifyContent: "flex-end",
-      alignItems: "flex-end"
+      alignItems: "flex-end",
     },
     radio_filter: {
       margin: " 0 3em",
-      fontSize: "1.5em"
+      fontSize: "1.5em",
     },
     filter_label: {
       display: "flex",
       justifyContent: "start",
-      fontSize: "1.5em"
+      fontSize: "1.5em",
     },
     dropdown: {
-      width: "300px"
-    }
+      width: "300px",
+    },
   })
 );
 
@@ -81,19 +82,19 @@ const Filter = (prop: any) => {
 
     const { history } = prop;
     axios
-      .post("http://127.0.0.1:5000/mail ", {
+      .post(URL_LINK + "mail", {
         age_lower: value[0],
         age_upper: value[1],
         gender: gender,
         body: emailContent,
-        event: interest
+        event: interest,
       })
-      .then(function(response) {
+      .then(function (response) {
         if (response.status === 200) {
           history.push("/Home");
         }
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
   };
@@ -117,7 +118,7 @@ const Filter = (prop: any) => {
   const [state, setState] = React.useState({
     checkedA: true,
     checkedB: true,
-    checkedC: true
+    checkedC: true,
   });
 
   const handleChange = (name: string) => (
@@ -170,7 +171,7 @@ const Filter = (prop: any) => {
                         <Typography
                           style={{
                             fontSize: "16px",
-                            color: "textSecondary"
+                            color: "textSecondary",
                           }}
                         >
                           {item}
@@ -288,7 +289,7 @@ const Filter = (prop: any) => {
             <Col>
               <TextField
                 label="event"
-                onChange={e => handleInterestChange(e)}
+                onChange={(e) => handleInterestChange(e)}
               />
             </Col>
           </Row>
@@ -305,10 +306,10 @@ const Filter = (prop: any) => {
           style={{ height: "25em", width: "80em", fontSize: "16px" }}
           className="textArea"
           aria-label="maximum height"
-          onChange={value => {
+          onChange={(value) => {
             emailBody(value);
           }}
-          onKeyDown={value => emailBody(value)}
+          onKeyDown={(value) => emailBody(value)}
         />
         <Container className="buttonWrapper">
           <Button

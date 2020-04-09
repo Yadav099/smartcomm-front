@@ -64,6 +64,14 @@ function Home(prop: any) {
   // const dummyCategories = ['Send', 'Customer', 'Logout']
   const classes = useStyles();
   const theme = useTheme();
+
+  const loggedin = () => {
+    return localStorage.getItem("isLoggedIn");
+  };
+  const { history } = prop;
+  React.useEffect(() => {
+    if (loggedin() === "false") history.push("/");
+  }, [history]);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   function handleDrawerToggle() {
     setMobileOpen(!mobileOpen);
@@ -78,9 +86,9 @@ function Home(prop: any) {
     console.log(value);
   };
   const handleClick3 = () => {
-    alert("Logout");
     const { history } = prop;
-
+    localStorage.setItem("isLoggedIn", "false");
+    // sessionStorage.clear();
     history.push("/");
     console.log(value);
   };

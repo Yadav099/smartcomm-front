@@ -31,6 +31,7 @@ import {
 import TopBar from "../../Component/AppBar/index";
 import ForgotPassword from "../../Component/ForgotPassword/index";
 import ForgotMailSent from "../../Component/ForgotMailSent/index";
+import { isLoggediN } from "../../Util/Authenticate";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -74,15 +75,37 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Login = (prop: any) => {
   const classes = useStyles();
-
+  const { history } = prop;
   // states for handling inputs
   const [companyName, updateCompanyName] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
 
+  const remindData = () => {
+    const rememberData: any = sessionStorage.getItem("loginData");
+
+    if (rememberData) {
+      const Cryptr = require("cryptr");
+      const cryptr = new Cryptr("myTotalySecretKey");
+
+      var data = JSON.parse(rememberData);
+      updateCompanyName(data["companyName"]);
+      updateEmployeeEmail(data["userEmail"]);
+      updatePassword(cryptr.decrypt(data["userPassword"]));
+    }
+  };
+  const loggedin = () => {
+    return localStorage.getItem("isLoggedIn");
+  };
+  React.useEffect(() => {
+    remindData();
+    if (loggedin() === "true") history.push("/Home");
+  }, [history]);
   // history  object to handle routing
-  const { history } = prop;
+
   const handleClick = () => {
+    // const decryptedString = cryptr.decrypt(encryptedString);
+    // sessionStorage.setItem("loginData");
     console.log("post");
 
     // axios api call
@@ -97,9 +120,30 @@ export const Login = (prop: any) => {
         }
       )
       .then(function (response) {
-        alert(response.data);
-        if (response.status === 200 && response.data === "Success") {
+        console.log(response.data);
+        if (response.status === 200) {
           history.push("/Home");
+          localStorage.setItem(
+            "token",
+            JSON.stringify(response.data["access_token"])
+          );
+          console.log(response.data["access_token"]);
+          isLoggediN();
+          if (remember) {
+            const Cryptr = require("cryptr");
+            const cryptr = new Cryptr("myTotalySecretKey");
+            console.log(response.data);
+
+            const loginCredential = {
+              companyName: companyName,
+              userEmail: employeeMail,
+              userPassword: cryptr.encrypt(password),
+            };
+            sessionStorage.setItem(
+              "loginData",
+              JSON.stringify(loginCredential)
+            );
+          }
         }
       })
       .catch(function (error) {
@@ -129,7 +173,7 @@ export const Login = (prop: any) => {
   const [emailValidation, setEmailValidation] = React.useState(false);
   const [companyValidation, setCompanyValidation] = React.useState(false);
   const [passwordValidation, setPasswordValidation] = React.useState(false);
-
+  const [remember, setRemember] = React.useState(false);
   const validate = () => {
     setEmailValidation(validateEmployeeEmail(employeeMail));
     setCompanyValidation(validateCompanyName(companyName));
@@ -180,6 +224,7 @@ export const Login = (prop: any) => {
                     <TextField
                       label="password"
                       variant="standard"
+                      type="password"
                       value={password}
                       onChange={(e) => updatePassword(e.target.value)}
                       fullWidth
@@ -194,6 +239,7 @@ export const Login = (prop: any) => {
                     <FormControlLabel
                       control={<Checkbox color="primary" />}
                       label="Remember me"
+                      onChange={() => setRemember(!remember)}
                     />
                   </Grid>
                   <Grid item>

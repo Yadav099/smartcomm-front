@@ -1,6 +1,5 @@
 import React from "react";
 
-import SideNavBar from "../../Component/SideNavBar";
 import AppBar from "@material-ui/core/AppBar";
 import Row from "react-bootstrap/Row";
 
@@ -12,7 +11,7 @@ import {
   Button,
   FormControlLabel,
   Checkbox,
-  Input
+  Input,
 } from "@material-ui/core";
 
 import { Typography, makeStyles, Theme, createStyles } from "@material-ui/core";
@@ -25,20 +24,20 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     HomeWrapper: {
       display: "flex",
-      flexDirection: "column"
+      flexDirection: "column",
     },
     AppBar: {
       backgroundColor: "#45398B",
-      padding: "1em"
+      padding: "1em",
     },
     "@media(width:762px) ": {
       AppBar: {
-        width: "100rem"
-      }
+        width: "100rem",
+      },
     },
     buttonStyle: {
-      margin: theme.spacing(1)
-    }
+      margin: theme.spacing(1),
+    },
   })
 );
 
@@ -62,14 +61,6 @@ export const CustomerPage = () => {
   return (
     <Container className={CustomerStyle.HomeWrapper}>
       <Row className="justify-content-md-center">
-        <Button
-          className={CustomerStyle.buttonStyle}
-          style={{ width: "10em", backgroundColor: "#45398B", color: "white" }}
-          onClick={handleOnClickAdd}
-        >
-          Add
-        </Button>
-
         {/* <Button
           className={CustomerStyle.buttonStyle}
           onClick={handleOnClickUpdate}
@@ -84,9 +75,7 @@ export const CustomerPage = () => {
           Delete
         </Button> */}
       </Row>
-      <br />
-      <br />
-      <br />
+
       {select === 1 && <AddCustomer />}
       {/* {select === 2 && <UpdateCustomer />}
       {select === 3 && <DeleteCustomer />} */}

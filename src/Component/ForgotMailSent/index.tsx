@@ -3,8 +3,8 @@ import "./main.scss";
 import axios from "axios";
 import { URL_LINK } from "../../Constant/Constant";
 
-import { Paper, TextField, Button, Grid, Typography } from "@material-ui/core";
-import { Row, Container } from "react-bootstrap";
+import { TextField, Button, Grid, Typography } from "@material-ui/core";
+import { Row } from "react-bootstrap";
 interface Iverify {
   moveToChangePassowrd: () => void;
 }
@@ -21,8 +21,8 @@ const ForgotMailSent = (prop: Iverify) => {
       .then(function (response) {
         alert(response.data);
         if (response.status === 200 && response.data === "Success") {
+          localStorage.setItem("changePassword", "true");
           prop.moveToChangePassowrd();
-          alert(response.data);
         }
       })
       .catch(function (error) {

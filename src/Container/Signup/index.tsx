@@ -67,7 +67,7 @@ export const Signup = (prop: any) => {
       })
       .then(function (response) {
         console.log(response.status);
-        if (response.status === 200 && response.data === "Succesfull") {
+        if (response.status === 200) {
           history.push("/");
         }
         console.log(response.data);
@@ -76,7 +76,6 @@ export const Signup = (prop: any) => {
         console.log(error);
       });
     console.log(companyName);
-    console.log("Login Button Pressed");
   };
 
   ///////validator/////
