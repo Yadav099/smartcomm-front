@@ -6,6 +6,8 @@ import Home from "./Container/Home";
 import { Route, Switch } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";
 import ChangePassword from "./Container/ChangePassword";
+import Loading from "./Component/Loading";
+
 function App() {
   return (
     <Router>
@@ -14,6 +16,7 @@ function App() {
         <Route path="/Home" component={Home} />
         <Route path="/Signup" component={Signup} />
         <Route path="/ChangePassword" component={ChangePassword} />
+        <Route path="/Loading" component={Loading} />
       </Switch>
     </Router>
   );

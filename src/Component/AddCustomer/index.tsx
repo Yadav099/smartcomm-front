@@ -7,6 +7,7 @@ import {
   Button,
   FormControlLabel,
   Collapse,
+  Switch,
 } from "@material-ui/core";
 import { URL_LINK } from "../../Constant/Constant";
 import axios from "axios";
@@ -60,6 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: "0.3em",
     },
     icon: { float: "right", margin: "auto", width: "2em", height: "2em" },
+    switch: { marginTop: "1em", float: "right" },
   })
 );
 export const AddCustomer = () => {
@@ -69,6 +71,7 @@ export const AddCustomer = () => {
   const [name, setName] = React.useState(data[1]);
   const [id, setId] = React.useState(data[0]);
   const [email, setEmail] = React.useState(data[2]);
+  const [admin, setAdmin] = React.useState(false);
   if (
     JSON.parse(sessionStorage.getItem("newEmployee") || "{}") !==
     (undefined || null)
@@ -94,16 +97,11 @@ export const AddCustomer = () => {
   };
 
   const sendFile = (event: any) => {
-    // checkError();
+    checkError();
+
+    console.log(error);
     var data: any = "";
-    if (
-      emailValidation &&
-      passwordValidation &&
-      companyValidation &&
-      !localStorage.getItem("token")
-    ) {
-      setError([companyValidation, passwordValidation, emailValidation]);
-    } else {
+    if (!error[0] && !error[1] && !error[2] && localStorage.getItem("token")) {
       data = localStorage.getItem("token");
       console.log(data);
       axios
@@ -111,6 +109,7 @@ export const AddCustomer = () => {
           employeeName: name,
           employeeId: id,
           employeeMail: email,
+          admin: admin,
         })
         .then(function (response) {
           if (response.status === 200) {
@@ -134,19 +133,20 @@ export const AddCustomer = () => {
       .get(URL_LINK + "customer/viewemployee", {})
 
       .then(function (response) {
-        if (response.status === 200) {
+        if (response.status === 200 && !response.data["error"]) {
           var Employees: any;
 
           Employees = response.data["data"];
           Employees.map((data: any, index: number) => {});
 
           setView(true);
+          var count: number = 1;
           setViews(
-            Employees.map((data: any, index: number) => {
-              return (
+            Employees.map((data: any) => {
+              return response.data["employeeEmail"] !== data["mail"] ? (
                 <tbody>
                   <tr>
-                    <td>{index + 1}</td>
+                    <td>{count++}</td>
                     <td>{data["name"]}</td>
                     <td>{data["mail"]}</td>
                     <td>
@@ -159,6 +159,8 @@ export const AddCustomer = () => {
                     </td>
                   </tr>
                 </tbody>
+              ) : (
+                <></>
               );
             })
           );
@@ -178,9 +180,11 @@ export const AddCustomer = () => {
   };
   React.useEffect(() => {
     getEmployees();
+    wipePersistent();
     const data = { 1: name, 0: id, 2: email };
     sessionStorage.setItem("newEmployee", JSON.stringify(data));
-  }, [email, getEmployees, id, name]);
+  }, []);
+
   const handleDelete = (name: string, mail: string) => {
     axios
       .delete(URL_LINK + "customer/deleteEmployee", {
@@ -199,16 +203,14 @@ export const AddCustomer = () => {
         console.log(error);
       });
   };
-  const [emailValidation, setEmailValidation] = React.useState(false);
-  const [passwordValidation, setPasswordValidation] = React.useState(false);
-  const [companyValidation, setCompanyValidation] = React.useState(false);
   const [error, setError] = React.useState([false, false, false]);
+
   const checkError = () => {
-    setEmailValidation(validateEmployeeEmail(email));
-    setPasswordValidation(validatePssword(id));
-    setCompanyValidation(validateCompanyName(name));
-    setError([companyValidation, passwordValidation, emailValidation]);
-    console.log(id, email, name, error);
+    setError([
+      validateCompanyName(name),
+      validatePssword(id),
+      validateEmployeeEmail(email),
+    ]);
   };
   const [checked, setChecked] = React.useState(false);
 
@@ -225,6 +227,7 @@ export const AddCustomer = () => {
         >
           Add new user
           <FormControlLabel
+            onClick={handleChange}
             control={
               checked ? (
                 <KeyboardArrowUpIcon
@@ -263,14 +266,24 @@ export const AddCustomer = () => {
                 </Col>
               </Row>
             ))}
+            <Row className={classes.switch}>
+              <FormControlLabel
+                value="end"
+                control={
+                  <Switch color="primary" onChange={() => setAdmin(!admin)} />
+                }
+                label="Admin"
+                labelPlacement="end"
+              />
+            </Row>
           </div>
+          \
           <div className={classes.buttonWrapper}>
             <Button
               variant="contained"
               color="primary"
               size="large"
               onClick={(event) => {
-                checkError();
                 sendFile(event);
               }}
             >
@@ -283,7 +296,7 @@ export const AddCustomer = () => {
       </Paper>
 
       <Paper className={classes.employeesTable}>
-        <Table responsive>
+        <Table size="small" responsive>
           <thead>
             <tr>
               <th>ID</th>
@@ -292,19 +305,7 @@ export const AddCustomer = () => {
             </tr>
           </thead>
 
-          {view ? (
-            views
-          ) : (
-            <>
-              <tbody>
-                <tr>
-                  <td>none</td>
-                  <td>none</td>
-                  <td>none</td>
-                </tr>
-              </tbody>
-            </>
-          )}
+          {view ? views : <></>}
         </Table>
       </Paper>
     </div>

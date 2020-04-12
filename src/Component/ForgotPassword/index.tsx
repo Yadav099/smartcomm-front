@@ -1,6 +1,6 @@
 import React from "react";
 import "./main.scss";
-import { Paper, TextField, Button, Grid, Typography } from "@material-ui/core";
+import { TextField, Button, Grid, Typography } from "@material-ui/core";
 import { Row, Container } from "react-bootstrap";
 import { URL_LINK } from "../../Constant/Constant";
 import axios from "axios";

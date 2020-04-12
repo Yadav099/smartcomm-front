@@ -64,6 +64,7 @@ export const Signup = (prop: any) => {
         employeeName: employeeName,
         employeeID: employeeID,
         employeeMail: employeeMail,
+        admin: true,
       })
       .then(function (response) {
         console.log(response.status);
@@ -157,7 +158,7 @@ export const Signup = (prop: any) => {
                 <Row></Row>
                 <TextField
                   id="outlined-basic"
-                  label="Employee ID"
+                  label="Employee ID (This is your password)"
                   variant="outlined"
                   value={employeeID}
                   error={passwordValidation}

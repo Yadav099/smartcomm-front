@@ -17,7 +17,9 @@ import { useTheme } from "@material-ui/core/styles";
 //import of component
 import { CustomerPage } from "../../Component/CustomerPage";
 import Filter from "../../Component/Filters";
-
+import AccountSetting from "../../Component/AccountSetting";
+import Profile from "../../Component/Profile/index";
+import { isLoggediN } from "../../Util/Authenticate";
 const drawerWidth = 260;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -61,11 +63,13 @@ const useStyles = makeStyles((theme) => ({
 
 function Home(prop: any) {
   const [value, setValue] = React.useState(1);
+  const [loggedOut, setLoggedOut] = React.useState(false);
   // const dummyCategories = ['Send', 'Customer', 'Logout']
   const classes = useStyles();
   const theme = useTheme();
 
   const loggedin = () => {
+    isLoggediN();
     return localStorage.getItem("isLoggedIn");
   };
   const { history } = prop;
@@ -86,17 +90,22 @@ function Home(prop: any) {
     console.log(value);
   };
   const handleClick3 = () => {
-    const { history } = prop;
-    localStorage.setItem("isLoggedIn", "false");
-    // sessionStorage.clear();
-    history.push("/");
+    setLoggedOut(true);
     console.log(value);
+    localStorage.setItem("isLoggedIn", "false");
+    history.push("/Loading");
+
+    setTimeout(function () {
+      history.push("/");
+    }, 500);
   };
 
   const handleClick4 = () => {
-    const { history } = prop;
-
-    history.push("/Profile");
+    setValue(3);
+    console.log(value);
+  };
+  const handleClick5 = () => {
+    setValue(4);
     console.log(value);
   };
 
@@ -107,18 +116,22 @@ function Home(prop: any) {
         <ListItem button key="Send" onClick={handleClick1}>
           <ListItemText primary={<h3>Send</h3>} secondary="Send mail " />
         </ListItem>
-
         <ListItem button key="Customer" onClick={handleClick2}>
           <ListItemText
             primary={<h3>Employees</h3>}
             secondary="Add or delete  users"
           />
         </ListItem>
-
-        <ListItem button key="Profile" onClick={handleClick4}>
+        <ListItem button key="Profile" onClick={handleClick5}>
           <ListItemText
             primary={<h3>Profile</h3>}
-            secondary="Check your details"
+            secondary="Check your dtails"
+          />
+        </ListItem>
+        <ListItem button key="Profile" onClick={handleClick4}>
+          <ListItemText
+            primary={<h3>Account setting</h3>}
+            secondary="Change your account details"
           />
         </ListItem>
         <ListItem button key="Logout" onClick={handleClick3}>
@@ -133,7 +146,7 @@ function Home(prop: any) {
   );
   return (
     <Container className={classes.root}>
-      <CssBaseline />
+      <CssBaseline />{" "}
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <IconButton
@@ -191,6 +204,8 @@ function Home(prop: any) {
         <div className={classes.toolbar} />
         {value === 1 && <Filter />}
         {value === 2 && <CustomerPage />}
+        {value === 3 && <AccountSetting />}
+        {value === 4 && <Profile />}
       </Container>
     </Container>
   );

@@ -32,6 +32,7 @@ import TopBar from "../../Component/AppBar/index";
 import ForgotPassword from "../../Component/ForgotPassword/index";
 import ForgotMailSent from "../../Component/ForgotMailSent/index";
 import { isLoggediN } from "../../Util/Authenticate";
+import { useHistory } from "react-router-dom";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -75,20 +76,20 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export const Login = (prop: any) => {
   const classes = useStyles();
-  const { history } = prop;
+  const history = useHistory();
   // states for handling inputs
   const [companyName, updateCompanyName] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
 
   const remindData = () => {
-    const rememberData: any = sessionStorage.getItem("loginData");
-
+    const rememberData: any = localStorage.getItem("loginData");
     if (rememberData) {
       const Cryptr = require("cryptr");
       const cryptr = new Cryptr("myTotalySecretKey");
 
       var data = JSON.parse(rememberData);
+
       updateCompanyName(data["companyName"]);
       updateEmployeeEmail(data["userEmail"]);
       updatePassword(cryptr.decrypt(data["userPassword"]));
@@ -97,12 +98,7 @@ export const Login = (prop: any) => {
   const loggedin = () => {
     return localStorage.getItem("isLoggedIn");
   };
-  React.useEffect(() => {
-    remindData();
-    if (loggedin() === "true") history.push("/Home");
-  }, [history]);
   // history  object to handle routing
-
   const handleClick = () => {
     // const decryptedString = cryptr.decrypt(encryptedString);
     // sessionStorage.setItem("loginData");
@@ -120,31 +116,31 @@ export const Login = (prop: any) => {
         }
       )
       .then(function (response) {
-        console.log(response.data);
-        if (response.status === 200) {
-          history.push("/Home");
+        if (response.status === 200 && !response.data["error"]) {
+          localStorage.setItem("isLoggedIn", "true");
+
           localStorage.setItem(
             "token",
             JSON.stringify(response.data["access_token"])
           );
           console.log(response.data["access_token"]);
-          isLoggediN();
+          history.push("/Loading");
+          setTimeout(function () {
+            history.push("/Home");
+          }, 2000);
+
           if (remember) {
             const Cryptr = require("cryptr");
             const cryptr = new Cryptr("myTotalySecretKey");
             console.log(response.data);
-
             const loginCredential = {
               companyName: companyName,
               userEmail: employeeMail,
               userPassword: cryptr.encrypt(password),
             };
-            sessionStorage.setItem(
-              "loginData",
-              JSON.stringify(loginCredential)
-            );
+            localStorage.setItem("loginData", JSON.stringify(loginCredential));
           }
-        }
+        } else alert(response.data["error"]);
       })
       .catch(function (error) {
         console.log(error);
@@ -181,6 +177,14 @@ export const Login = (prop: any) => {
   };
 
   ///////validation ends here//////////////
+
+  React.useEffect(() => {
+    remindData();
+    if (loggedin() === "true") {
+      history.push("/Home");
+      console.log("reached");
+    }
+  });
   return (
     <>
       <TopBar />
@@ -293,6 +297,7 @@ export const Login = (prop: any) => {
                       <br />
                       <Divider />
                       <ForgotMailSent
+                        updateShowEnterCode={updateShowEnterCode}
                         moveToChangePassowrd={moveToChangePassowrd}
                       />
                     </>

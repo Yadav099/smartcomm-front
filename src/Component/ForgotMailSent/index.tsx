@@ -4,9 +4,10 @@ import axios from "axios";
 import { URL_LINK } from "../../Constant/Constant";
 
 import { TextField, Button, Grid, Typography } from "@material-ui/core";
-import { Row } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 interface Iverify {
   moveToChangePassowrd: () => void;
+  updateShowEnterCode: () => void;
 }
 const ForgotMailSent = (prop: Iverify) => {
   const [otp, setOtp] = React.useState("");
@@ -32,9 +33,26 @@ const ForgotMailSent = (prop: Iverify) => {
   return (
     <div className="forgot-wrapper">
       <Row>
-        <Typography variant="h5" style={{ color: "green" }}>
-          Verify code
-        </Typography>
+        <Col>
+          <Typography variant="h5" style={{ color: "green" }}>
+            Verify code
+          </Typography>
+        </Col>
+        <Col>
+          <Typography
+            style={{ color: "orange" }}
+            onClick={() => {
+              prop.updateShowEnterCode();
+            }}
+          >
+            Re-Enter
+          </Typography>
+        </Col>
+        <Col>
+          <Typography style={{ color: "orange" }} onClick={() => {}}>
+            Re-send
+          </Typography>
+        </Col>
       </Row>
       <Row>
         <TextField
