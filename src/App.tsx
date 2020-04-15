@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { Signup } from "./Container/Signup";
-import { Login } from "./Container/Login";
+import Login from "./Container/Login";
 import Home from "./Container/Home";
 import { Route, Switch } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";

@@ -1,3 +1,6 @@
+// component to send verrification code to server for verrfication
+// after successful verrification router redirects to change password container
+
 import React from "react";
 import "./main.scss";
 import axios from "axios";

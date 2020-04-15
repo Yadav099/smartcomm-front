@@ -1,3 +1,6 @@
+// component to send email id and company name to server
+// on successful resonse switche to forgot mail sent
+
 import React from "react";
 import "./main.scss";
 import { TextField, Button, Grid, Typography } from "@material-ui/core";
