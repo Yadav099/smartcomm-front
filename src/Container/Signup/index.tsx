@@ -10,6 +10,7 @@ import { URL_LINK } from "../../Constant/Constant";
 import { TextField, Button, makeStyles, Paper } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import TopBar from "../../Component/AppBar/index";
+import Notification from "../../Component/Notification/index";
 
 import {
   validateEmployeeEmail,
@@ -17,44 +18,53 @@ import {
   validatePssword,
 } from "../../Util/Validation";
 
+const useStyles = makeStyles((theme) => ({
+  title: {
+    flexGrow: 1,
+    display: "flex",
+    justifyContent: "center",
+    fontWeight: "bold",
+  },
+  swrapper: {
+    width: "fit-content",
+    margin: "auto",
+
+    padding: "1em",
+  },
+  wrapper: {
+    display: "flex",
+    justifyContent: "center",
+    flexDirection: "column",
+  },
+  root: {
+    "& .MuiTextField-root": {
+      margin: theme.spacing(1),
+      width: 350,
+    },
+    display: "flex",
+
+    flexDirection: "column",
+  },
+}));
 export const Signup = (prop: any) => {
+  // all the states to extract data
+
   const [companyName, updateCompanyName] = React.useState("");
   const [employeeName, updateEmployeeName] = React.useState("");
   const [companyMail, updateCompanyEmail] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [employeeID, updateEmployeeID] = React.useState("");
 
-  const useStyles = makeStyles((theme) => ({
-    title: {
-      flexGrow: 1,
-      display: "flex",
-      justifyContent: "center",
-      fontWeight: "bold",
-    },
-    swrapper: {
-      width: "fit-content",
-      margin: "auto",
+  // notification state to set  error message or success message in Notification componenet
+  const [notification, setNotification] = React.useState({
+    state: false,
+    response: true,
+    message: "",
+  });
 
-      padding: "1em",
-    },
-    wrapper: {
-      display: "flex",
-      justifyContent: "center",
-      flexDirection: "column",
-    },
-    root: {
-      "& .MuiTextField-root": {
-        margin: theme.spacing(1),
-        width: 350,
-      },
-      display: "flex",
-
-      flexDirection: "column",
-    },
-  }));
   const classes = useStyles();
-
-  const handleClick = () => {
+  //function to carry out signup on submit
+  const signup = () => {
     console.log("post");
     const { history } = prop;
     axios
@@ -68,13 +78,35 @@ export const Signup = (prop: any) => {
       })
       .then(function (response) {
         console.log(response.status);
-        if (response.status === 200) {
-          history.push("/");
+        if (response.status === 200 && response.data === "Successful") {
+          // setting success message
+
+          setNotification({
+            state: true,
+            response: true,
+            message: response.data,
+          });
+          setTimeout(function () {
+            history.push("/");
+          }, 2000);
         }
-        console.log(response.data);
+
+        // setting error message
+        else
+          setNotification({
+            state: true,
+            response: false,
+            message: response.data,
+          });
       })
       .catch(function (error) {
-        console.log(error);
+        // setting failure message
+
+        setNotification({
+          state: true,
+          response: false,
+          message: error.data,
+        });
       });
     console.log(companyName);
   };
@@ -128,7 +160,7 @@ export const Signup = (prop: any) => {
                 />
                 <TextField
                   id="outlined-basic"
-                  label="Company Email"
+                  label="Company distribution email id"
                   variant="outlined"
                   value={companyMail}
                   error={companyEmailValidation}
@@ -181,8 +213,13 @@ export const Signup = (prop: any) => {
           <Row>
             <Button
               onClick={() => {
-                handleClick();
+                signup();
                 validate();
+                setNotification({
+                  state: false,
+                  response: false,
+                  message: "",
+                });
               }}
               style={{
                 width: "10em",
@@ -193,6 +230,15 @@ export const Signup = (prop: any) => {
             >
               Sign Up
             </Button>
+            {notification["state"] ? (
+              <Notification
+                state={notification["state"]}
+                message={notification["message"]}
+                response={notification["response"]}
+              />
+            ) : (
+              <></>
+            )}
           </Row>
           <br />
           <Link style={{ margin: "auto" }} to="/">

@@ -1,10 +1,13 @@
+//react and redux imports
 import React from "react";
+import { Set } from "../../Redux/Action/action";
+import { useHistory } from "react-router-dom";
+import { connect } from "react-redux";
 
 // import of routing and axios api call
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { URL_LINK } from "../../Constant/Constant";
-
 // imports of layouts and styles from bootstrap and material ui
 import {
   Paper,
@@ -19,7 +22,6 @@ import {
   Theme,
 } from "@material-ui/core";
 import { Container } from "react-bootstrap";
-
 // import for validation of inputs
 import {
   validateCompanyName,
@@ -31,8 +33,7 @@ import {
 import TopBar from "../../Component/AppBar/index";
 import ForgotPassword from "../../Component/ForgotPassword/index";
 import ForgotMailSent from "../../Component/ForgotMailSent/index";
-import { isLoggediN } from "../../Util/Authenticate";
-import { useHistory } from "react-router-dom";
+import Notification from "../../Component/Notification/index";
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -74,82 +75,57 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export const Login = (prop: any) => {
+const Login = (prop: any) => {
+  //sets persistency and checks if
+  // user is already loggedin or not
+
+  React.useEffect(() => {
+    remindData();
+    if (loggedin() === "true") {
+      history.push("/Home");
+      console.log("reached");
+    }
+  });
+
   const classes = useStyles();
+
+  // history  object to handle routing
   const history = useHistory();
+
   // states for handling inputs
+  const { dispatch } = prop;
   const [companyName, updateCompanyName] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
   const [password, updatePassword] = React.useState("");
 
+  // notification state to set erorr / success message
+  const [notification, setNotification] = React.useState({
+    state: false,
+    response: true,
+    message: "",
+  });
+
+  //states and call back function to handle forgot password
+  const [showForget, setShowForget] = React.useState(false);
+  const [showEnterCode, setShowEnterCode] = React.useState(true);
+
+  // set up persistent from local storage to local states
   const remindData = () => {
     const rememberData: any = localStorage.getItem("loginData");
     if (rememberData) {
       const Cryptr = require("cryptr");
       const cryptr = new Cryptr("myTotalySecretKey");
-
       var data = JSON.parse(rememberData);
-
       updateCompanyName(data["companyName"]);
       updateEmployeeEmail(data["userEmail"]);
       updatePassword(cryptr.decrypt(data["userPassword"]));
     }
   };
+
   const loggedin = () => {
     return localStorage.getItem("isLoggedIn");
   };
-  // history  object to handle routing
-  const handleClick = () => {
-    // const decryptedString = cryptr.decrypt(encryptedString);
-    // sessionStorage.setItem("loginData");
-    console.log("post");
 
-    // axios api call
-    // with authentication header
-    // and company name
-    axios
-      .post(
-        URL_LINK + "login ",
-        { companyName: companyName },
-        {
-          auth: { username: employeeMail, password: password },
-        }
-      )
-      .then(function (response) {
-        if (response.status === 200 && !response.data["error"]) {
-          localStorage.setItem("isLoggedIn", "true");
-
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data["access_token"])
-          );
-          console.log(response.data["access_token"]);
-          history.push("/Loading");
-          setTimeout(function () {
-            history.push("/Home");
-          }, 2000);
-
-          if (remember) {
-            const Cryptr = require("cryptr");
-            const cryptr = new Cryptr("myTotalySecretKey");
-            console.log(response.data);
-            const loginCredential = {
-              companyName: companyName,
-              userEmail: employeeMail,
-              userPassword: cryptr.encrypt(password),
-            };
-            localStorage.setItem("loginData", JSON.stringify(loginCredential));
-          }
-        } else alert(response.data["error"]);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
-
-  //states and call back function to handle forgot password
-  const [showForget, setShowForget] = React.useState(false);
-  const [showEnterCode, setShowEnterCode] = React.useState(true);
   const updateForget = () => {
     setShowForget(!showForget);
     console.log(showForget);
@@ -162,6 +138,78 @@ export const Login = (prop: any) => {
   //successful verrification of code
   const moveToChangePassowrd = () => {
     history.push("/ChangePassword");
+  };
+
+  // axios api call for login with aythentication header
+  // which returns a JWT token on successful login
+  // which is stored in local storage and
+
+  const signin = () => {
+    console.log("post");
+
+    // axios api call
+    // with authentication header
+    // and company name
+
+    axios
+      .post(
+        URL_LINK + "login ",
+        { companyName: companyName },
+        {
+          auth: { username: employeeMail, password: password },
+        }
+      )
+      .then(function (response) {
+        if (response.status === 200 && !response.data["error"]) {
+          setNotification({
+            state: true,
+            response: true,
+            message: "Logging in... ",
+          });
+          setTimeout(function () {
+            history.push("/Home");
+
+            localStorage.setItem("isLoggedIn", "true");
+
+            localStorage.setItem(
+              "token",
+              JSON.stringify(response.data["access_token"])
+            );
+            console.log(response.data["access_token"]);
+
+            if (remember) {
+              const Cryptr = require("cryptr");
+              const cryptr = new Cryptr("myTotalySecretKey");
+              console.log(response.data);
+              const loginCredential = {
+                companyName: companyName,
+                userEmail: employeeMail,
+                userPassword: cryptr.encrypt(password),
+              };
+              localStorage.setItem(
+                "loginData",
+                JSON.stringify(loginCredential)
+              );
+            }
+            dispatch(Set());
+          }, 500);
+        } else {
+          setNotification({
+            state: true,
+            response: false,
+            message: "invalid email or password ",
+          });
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        setNotification({
+          state: true,
+          response: false,
+          message: "No data entered ",
+        });
+      });
+    console.log(notification);
   };
 
   ///////// validation part from here/////////
@@ -178,13 +226,6 @@ export const Login = (prop: any) => {
 
   ///////validation ends here//////////////
 
-  React.useEffect(() => {
-    remindData();
-    if (loggedin() === "true") {
-      history.push("/Home");
-      console.log("reached");
-    }
-  });
   return (
     <>
       <TopBar />
@@ -273,7 +314,7 @@ export const Login = (prop: any) => {
                 <Grid container justify="center" style={{ marginTop: "10px" }}>
                   <Button
                     onClick={() => {
-                      handleClick();
+                      signin();
                       validate();
                     }}
                     variant="outlined"
@@ -282,6 +323,15 @@ export const Login = (prop: any) => {
                   >
                     Login
                   </Button>
+                  {notification["state"] ? (
+                    <Notification
+                      state={notification["state"]}
+                      message={notification["message"]}
+                      response={notification["response"]}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {showForget ? (
                   showEnterCode ? (
@@ -313,3 +363,8 @@ export const Login = (prop: any) => {
     </>
   );
 };
+
+const mapStateProps = (state: any) => {
+  return { Admin: state.Admin };
+};
+export default connect(mapStateProps)(Login);
