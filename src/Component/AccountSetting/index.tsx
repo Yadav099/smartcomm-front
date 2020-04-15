@@ -7,7 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import UserEmailChange from "../UserEmailChange";
 import UserPasswordChange from "../UserPasswordChange";
-import { Container, Col } from "react-bootstrap";
+import { Container } from "react-bootstrap";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,7 +70,6 @@ const AccountSetting = () => {
         >
           <Tab label="Change email" {...a11yProps(0)} />
           <Tab label="Change password" {...a11yProps(1)} />
-          <Tab label="Change company details" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0}>

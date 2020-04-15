@@ -6,9 +6,8 @@ import {
   createStyles,
   makeStyles,
   Button,
-  Paper,
 } from "@material-ui/core";
-import DialogPassword from "../../Container/DialogBox";
+import DialogPassword from "../DialogBox";
 import { validateEmployeeEmail } from "../../Util/Validation";
 const useStyles = makeStyles(() =>
   createStyles({
