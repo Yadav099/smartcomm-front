@@ -3,9 +3,19 @@ import "./main.scss";
 import { isLoggediN } from "../../Util/Authenticate";
 import { FetchUser } from "../../Util/FetchUser";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
+import DashboardRoundedIcon from "@material-ui/icons/DashboardRounded";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 
+import { Set } from "../../Redux/Action/action";
 // import of icons layouts from material ui
-import { makeStyles, AppBar, Toolbar, Typography } from "@material-ui/core";
+import {
+  makeStyles,
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+} from "@material-ui/core";
 import { Container } from "react-bootstrap";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
@@ -43,12 +53,10 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor: "#45398B",
+    backgroundColor: "#302155",
   },
   title: {
     flexGrow: 1,
-    display: "flex",
-    justifyContent: "center",
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -74,27 +82,36 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "1em",
   },
   adminLogo: { fontWeight: "bold", padding: "5px 0" },
+  button: {
+    margin: "auto",
+    marginRight: "0.5em",
+  },
 }));
 
 const Home = (prop: any) => {
   const { history } = prop;
+  const { dispatch } = prop;
   React.useEffect(() => {
     sessionStorage.setItem("fetch", "false");
 
     FetchUser();
 
-    if (loggedin() === "false") history.push("/");
+    isLoggediN();
+
+    if (loggedin() !== "true") history.push("/Login");
+    dispatch(Set());
   }, [history]);
 
   const classes = useStyles();
   const theme = useTheme();
-  const [value, setValue] = React.useState(1);
+  const [value, setValue] = React.useState(4);
   const [user, setUser] = React.useState({
     name: "",
     email: "",
     companyEmail: "",
     company: "",
     admin: false,
+    id: "",
   });
 
   const loggedin = () => {
@@ -117,8 +134,9 @@ const Home = (prop: any) => {
   };
   const Logout = () => {
     console.log(value);
-    history.push("/");
+
     localStorage.setItem("isLoggedIn", "false");
+    history.push("/Login");
     localStorage.removeItem("UserDetails");
     localStorage.removeItem("token");
     sessionStorage.removeItem("fetch");
@@ -153,23 +171,40 @@ const Home = (prop: any) => {
         company: data["company"],
         companyEmail: data["companyEmail"],
         admin: data["admin"],
+        id: data["id"],
       });
     }
   };
 
   // drawer function constitutes of nav bar
   const drawer = (
-    <div>
+    <div style={{ margin: "0 auto", float: "left" }}>
       <List>
         {/* {dummyCategories.map((text, index) => ( */}
         <ListItem
           button
-          key="Send"
+          key="Profile"
           onClick={() => {
-            send();
+            profile();
           }}
         >
-          <ListItemText primary={<h3>Send</h3>} secondary="Send mail " />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <ListItemText
+              primary={<h3>Profile</h3>}
+              secondary="Check your dtails"
+            />
+            <div style={{ display: "flex" }}>
+              {prop.Admin ? (
+                <div className={classes.adminLogo}>
+                  <img className={classes.logo} src={AdminLogo} alt="admin" />
+                </div>
+              ) : (
+                <div className={classes.adminLogo}>
+                  <AccountCircleIcon />{" "}
+                </div>
+              )}
+            </div>{" "}
+          </div>
         </ListItem>
         {prop.Admin ? (
           <ListItem
@@ -187,18 +222,7 @@ const Home = (prop: any) => {
         ) : (
           <></>
         )}
-        <ListItem
-          button
-          key="Profile"
-          onClick={() => {
-            profile();
-          }}
-        >
-          <ListItemText
-            primary={<h3>Profile</h3>}
-            secondary="Check your dtails"
-          />
-        </ListItem>
+
         <ListItem
           button
           key="Customer"
@@ -223,7 +247,7 @@ const Home = (prop: any) => {
             secondary="Change your account details"
           />
         </ListItem>
-        <ListItem
+        {/* <ListItem
           button
           key="Logout"
           onClick={() => {
@@ -234,7 +258,7 @@ const Home = (prop: any) => {
             primary={<h3>Logout</h3>}
             secondary="Logout ofthe session"
           />
-        </ListItem>
+        </ListItem> */}
         {/* ))} */}
       </List>
     </div>
@@ -254,17 +278,24 @@ const Home = (prop: any) => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h4" noWrap className={classes.title}>
+          <Typography
+            variant="h5"
+            style={{ fontWeight: "bold" }}
+            noWrap
+            className={classes.title}
+          >
             Smart Comm
           </Typography>
-          {prop.Admin ? (
-            <div className={classes.adminLogo}>
-              <img className={classes.logo} src={AdminLogo} alt="admin" />
-              <p style={{ marginBottom: "0" }}>ADMIN</p>
-            </div>
-          ) : (
-            <></>
-          )}
+
+          <Link to="/Dashboard">
+            {" "}
+            <Button color="inherit" className={classes.button}>
+              <DashboardRoundedIcon /> <Typography>Dasboard</Typography>{" "}
+            </Button>
+          </Link>
+          <Button color="inherit" onClick={Logout}>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer}>
@@ -311,7 +342,6 @@ const Home = (prop: any) => {
         <div className={classes.toolbar} />
 
         {/* comparision of value set from nav bar to set component to show */}
-        {value === 1 && <Filter />}
         {value === 2 && <AddCustomer />}
         {value === 3 && <AccountSetting />}
         {value === 4 && (

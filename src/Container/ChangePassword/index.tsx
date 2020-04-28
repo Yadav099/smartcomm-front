@@ -37,9 +37,9 @@ const ChangePassword = (prop: any) => {
   };
   // 6Lfj2-YUAAAAAJc51y_lQvwGKUTmpB6srV9GdRAT
   return (
-    <>
+    <div className="changePasswordWrapper">
       <TopBar />
-      <Container className="changePasswordWrapper" maxWidth="md">
+      <Container maxWidth="md" style={{ borderRadius: "2em" }}>
         <Paper className="passwordWrapper">
           <Grid>
             <Typography variant="h3" style={{ color: "green" }}>
@@ -82,7 +82,7 @@ const ChangePassword = (prop: any) => {
           </Grid>
         </Paper>
       </Container>
-    </>
+    </div>
   );
 };
 export default ChangePassword;

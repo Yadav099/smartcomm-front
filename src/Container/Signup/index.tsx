@@ -1,5 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import React from "react";
+import Background from "../../Assets/background.jpg";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -25,11 +26,21 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     fontWeight: "bold",
   },
+  background: {
+    backgroundImage: `url(${Background})`,
+    width: "100vw",
+    height: "100vh",
+    paddingTop: "10%",
+    "@media (max-width: 600px) ": {
+      paddingTop: "25%",
+    },
+  },
   swrapper: {
     width: "fit-content",
     margin: "auto",
-
+    backgroundColor: "#dddddd",
     padding: "1em",
+    position: "sticky",
   },
   wrapper: {
     display: "flex",
@@ -53,7 +64,6 @@ export const Signup = (prop: any) => {
   const [employeeName, updateEmployeeName] = React.useState("");
   const [companyMail, updateCompanyEmail] = React.useState("");
   const [employeeMail, updateEmployeeEmail] = React.useState("");
-  const [employeeID, updateEmployeeID] = React.useState("");
 
   // notification state to set  error message or success message in Notification componenet
   const [notification, setNotification] = React.useState({
@@ -66,49 +76,70 @@ export const Signup = (prop: any) => {
   //function to carry out signup on submit
   const signup = () => {
     console.log("post");
-    const { history } = prop;
-    axios
-      .post(URL_LINK + "signup", {
-        companyName: companyName,
-        companyMail: companyMail,
-        employeeName: employeeName,
-        employeeID: employeeID,
-        employeeMail: employeeMail,
-        admin: true,
-      })
-      .then(function (response) {
-        console.log(response.status);
-        if (response.status === 200 && response.data === "Successful") {
-          // setting success message
+    setNotification({
+      state: false,
+      response: false,
+      message: "",
+    });
+    if (
+      !companyValidation &&
+      !employeeNameValidation &&
+      !emailValidation &&
+      !companyEmailValidation
+    ) {
+      setNotification({
+        state: false,
+        response: false,
+        message: "",
+      });
+      const { history } = prop;
+      axios
+        .post(URL_LINK + "signup", {
+          companyName: companyName,
+          companyMail: companyMail,
+          employeeName: employeeName,
+          employeeMail: employeeMail,
+          admin: true,
+        })
+        .then(function (response) {
+          console.log(response.status);
+          if (response.status === 200 && response.data === "Successful") {
+            // setting success message
 
-          setNotification({
-            state: true,
-            response: true,
-            message: response.data,
-          });
-          setTimeout(function () {
-            history.push("/");
-          }, 2000);
-        }
+            setNotification({
+              state: true,
+              response: true,
+              message: response.data,
+            });
+            setTimeout(function () {
+              history.push("/Login");
+            }, 2000);
+          }
 
-        // setting error message
-        else
+          // setting error message
+          else
+            setNotification({
+              state: true,
+              response: false,
+              message: response.data,
+            });
+        })
+        .catch(function (error) {
+          // setting failure message
+
           setNotification({
             state: true,
             response: false,
-            message: response.data,
+            message: "No connection",
           });
-      })
-      .catch(function (error) {
-        // setting failure message
-
-        setNotification({
-          state: true,
-          response: false,
-          message: error.data,
         });
+      console.log(companyName);
+    } else
+      setNotification({
+        state: true,
+        response: false,
+        message: "Enter data",
       });
-    console.log(companyName);
   };
 
   ///////validator/////
@@ -121,7 +152,6 @@ export const Signup = (prop: any) => {
   const [employeeNameValidation, setEmployeeNameValidation] = React.useState(
     false
   );
-  const [passwordValidation, setPasswordValidation] = React.useState(false);
 
   const validate = () => {
     //  employee email
@@ -130,15 +160,13 @@ export const Signup = (prop: any) => {
     setCompanyEmailValidation(validateEmployeeEmail(companyMail));
     //company name
     setCompanyValidation(validateCompanyName(companyName));
-    //employee id
-    setPasswordValidation(validatePssword(employeeID));
     //employee name
     setEmployeeNameValidation(validateCompanyName(employeeName));
   };
   //Validator //////
 
   return (
-    <>
+    <div className={classes.background}>
       <TopBar />
 
       <Paper className={classes.swrapper}>
@@ -186,16 +214,7 @@ export const Signup = (prop: any) => {
                   value={employeeName}
                   onChange={(e) => updateEmployeeName(e.target.value)}
                 />
-                <br />
-                <Row></Row>
-                <TextField
-                  id="outlined-basic"
-                  label="Employee ID (This is your password)"
-                  variant="outlined"
-                  value={employeeID}
-                  error={passwordValidation}
-                  onChange={(e) => updateEmployeeID(e.target.value)}
-                />
+
                 <br />
                 <TextField
                   id="outlined-basic"
@@ -246,6 +265,6 @@ export const Signup = (prop: any) => {
           </Link>
         </Container>
       </Paper>
-    </>
+    </div>
   );
 };

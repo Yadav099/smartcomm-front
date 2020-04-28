@@ -3,6 +3,7 @@ import React from "react";
 import { Set } from "../../Redux/Action/action";
 import { useHistory } from "react-router-dom";
 import { connect } from "react-redux";
+import "./main.scss";
 
 // import of routing and axios api call
 import axios from "axios";
@@ -38,6 +39,10 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+
+      "@media (max-width: 600px) ": {
+        position: "fixed",
+      },
     },
     title: {
       flexGrow: 1,
@@ -55,6 +60,8 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2),
     },
     paper: {
+      backgroundColor: "inherit",
+
       padding: theme.spacing(2),
       textAlign: "center",
       color: theme.palette.text.secondary,
@@ -66,11 +73,15 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(2),
     },
     padding: {
+      backgroundColor: "#CCCCCC",
       padding: theme.spacing(2),
       width: "500px",
-      marginTop: "90px",
+      marginTop: "20%",
       marginLeft: "20px",
       marginRight: "20px",
+      "@media (max-width: 600px) ": {
+        marginTop: "35%",
+      },
     },
   })
 );
@@ -78,15 +89,17 @@ const useStyles = makeStyles((theme: Theme) =>
 const Login = (prop: any) => {
   //sets persistency and checks if
   // user is already loggedin or not
-
+  var pers = ["", "", ""];
   React.useEffect(() => {
     remindData();
     if (loggedin() === "true") {
       history.push("/Home");
       console.log("reached");
     }
-  });
-
+  }, []);
+  const Cryptr = require("cryptr");
+  const cryptr = new Cryptr("myTotalySecretKey");
+  var data: any;
   const classes = useStyles();
 
   // history  object to handle routing
@@ -94,16 +107,38 @@ const Login = (prop: any) => {
 
   // states for handling inputs
   const { dispatch } = prop;
-  const [companyName, updateCompanyName] = React.useState("");
-  const [employeeMail, updateEmployeeEmail] = React.useState("");
-  const [password, updatePassword] = React.useState("");
+  data = JSON.parse(localStorage.getItem("loginData") || "{}");
 
+  // const [companyName, updateCompanyName] = React.useState(data["companyName"]);
+  // const [employeeMail, updateEmployeeEmail] = React.useState(data["userEmail"]);
+  // var pass: any;
+  // data["userPassword"]
+  //   ? (pass = cryptr.decrypt(data["userPassword"]))
+  //   : (pass = "");
+
+  // const [password, updatePassword] = React.useState(pass);
+
+  const [companyName, updateCompanyName] = React.useState(prop.pers[0]);
+  const [employeeMail, updateEmployeeEmail] = React.useState(prop.pers[1]);
+  const [password, updatePassword] = React.useState(prop.pers[2]);
   // notification state to set erorr / success message
   const [notification, setNotification] = React.useState({
     state: false,
     response: true,
     message: "",
   });
+
+  const updatePasswordValue = (event: any) => {
+    updatePassword(event.target.value);
+  };
+
+  const updateCompanyValue = (event: any) => {
+    updateCompanyName(event.target.value);
+  };
+
+  const updateEmailValue = (event: any) => {
+    updateEmployeeEmail(event.target.value);
+  };
 
   //states and call back function to handle forgot password
   const [showForget, setShowForget] = React.useState(false);
@@ -113,12 +148,16 @@ const Login = (prop: any) => {
   const remindData = () => {
     const rememberData: any = localStorage.getItem("loginData");
     if (rememberData) {
-      const Cryptr = require("cryptr");
-      const cryptr = new Cryptr("myTotalySecretKey");
-      var data = JSON.parse(rememberData);
+      data = JSON.parse(rememberData);
       updateCompanyName(data["companyName"]);
       updateEmployeeEmail(data["userEmail"]);
       updatePassword(cryptr.decrypt(data["userPassword"]));
+      // var pass: any;
+      // data["userPassword"]
+      //   ? (pass = cryptr.decrypt(data["userPassword"]))
+      //   : (pass = "");
+      // pers = [data["companyName"], data["userEmail"], pass];
+      // console.log(pers);
     }
   };
 
@@ -145,71 +184,116 @@ const Login = (prop: any) => {
   // which is stored in local storage and
 
   const signin = () => {
-    console.log("post");
-
     // axios api call
     // with authentication header
     // and company name
+    if (!emailValidation && !companyValidation && !passwordValidation) {
+      console.log(employeeMail);
+      setNotification({
+        state: false,
+        response: false,
+        message: "invalid email or password ",
+      });
+      axios
+        .post(
+          URL_LINK + "login ",
+          { companyName: companyName },
+          {
+            auth: { username: employeeMail, password: password },
+          }
+        )
+        .then(function (response) {
+          if (response.status === 200 && !response.data["error"]) {
+            if (response.data["render"]) {
+              localStorage.setItem("changePassword", "true");
+              history.push("/ChangePassword");
+            } else {
+              localStorage.setItem("isLoggedIn", "true");
+              history.push("/Dashboard");
 
-    axios
-      .post(
-        URL_LINK + "login ",
-        { companyName: companyName },
-        {
-          auth: { username: employeeMail, password: password },
-        }
-      )
-      .then(function (response) {
-        if (response.status === 200 && !response.data["error"]) {
-          setNotification({
-            state: true,
-            response: true,
-            message: "Logging in... ",
-          });
-          setTimeout(function () {
-            history.push("/Home");
-
-            localStorage.setItem("isLoggedIn", "true");
-
-            localStorage.setItem(
-              "token",
-              JSON.stringify(response.data["access_token"])
-            );
-            console.log(response.data["access_token"]);
-
-            if (remember) {
-              const Cryptr = require("cryptr");
-              const cryptr = new Cryptr("myTotalySecretKey");
-              console.log(response.data);
-              const loginCredential = {
-                companyName: companyName,
-                userEmail: employeeMail,
-                userPassword: cryptr.encrypt(password),
-              };
               localStorage.setItem(
-                "loginData",
-                JSON.stringify(loginCredential)
+                "token",
+                JSON.stringify(response.data["access_token"])
               );
+              console.log(response.data["access_token"]);
+              setNotification({
+                state: true,
+                response: true,
+                message: "Logging in... ",
+              });
+              if (remember) {
+                console.log(response.data);
+                const loginCredential = {
+                  companyName: companyName,
+                  userEmail: employeeMail,
+                  userPassword: cryptr.encrypt(password),
+                };
+                localStorage.setItem(
+                  "loginData",
+                  JSON.stringify(loginCredential)
+                );
+              }
+              dispatch(Set());
             }
-            dispatch(Set());
-          }, 500);
-        } else {
+          } else {
+            setNotification({
+              state: true,
+              response: false,
+              message: "invalid email or password ",
+            });
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
           setNotification({
             state: true,
             response: false,
-            message: "invalid email or password ",
+            message: "No response ",
+          });
+        });
+    }
+    console.log(notification);
+  };
+
+  //forgot password props
+  const [employeEmail, updateEmployeEmail] = React.useState("");
+  const updateEmail = (event: any) => {
+    updateEmployeEmail(event.target.value);
+  };
+  const [company, setCompany] = React.useState("");
+  const updateCompany = (event: any) => {
+    setCompany(event.target.value);
+  };
+
+  const submitForgetHandler = (state: boolean) => {
+    if (state) updateShowEnterCode();
+    axios
+      .post(URL_LINK + "ForgotPassword ", {
+        emp_email: employeEmail,
+        emp_company: company,
+      })
+      .then(function (response) {
+        if (response.status === 200 && response.data === "Success") {
+          setNotification({
+            state: true,
+            response: false,
+            message:
+              "Verrification code sent if email id entered is registered",
           });
         }
-      })
-      .catch(function (error) {
-        console.log(error);
         setNotification({
           state: true,
           response: false,
-          message: "No data entered ",
+          message: "Verrification code sent if email id entered is registered",
+        });
+      })
+      .catch(function (error) {
+        setNotification({
+          state: true,
+          response: false,
+          message: "Wrong email or company name",
         });
       });
-    console.log(notification);
   };
 
   ///////// validation part from here/////////
@@ -227,7 +311,7 @@ const Login = (prop: any) => {
   ///////validation ends here//////////////
 
   return (
-    <>
+    <div className="background">
       <TopBar />
       <Container className={classes.root}>
         <Grid container spacing={3}>
@@ -240,9 +324,9 @@ const Login = (prop: any) => {
                       id="outlined-basic"
                       label="Company Name"
                       variant="standard"
-                      value={companyName}
-                      onChange={(e) => updateCompanyName(e.target.value)}
+                      onChange={(e) => updateCompanyValue(e)}
                       fullWidth
+                      defaultValue={prop.pers[0]}
                       autoFocus
                       required
                       error={companyValidation}
@@ -254,9 +338,9 @@ const Login = (prop: any) => {
                     <TextField
                       label="Employee Email-ID"
                       variant="standard"
-                      value={employeeMail}
-                      onChange={(e) => updateEmployeeEmail(e.target.value)}
+                      onChange={(e) => updateEmailValue(e)}
                       fullWidth
+                      defaultValue={prop.pers[1]}
                       autoFocus
                       required
                       error={emailValidation}
@@ -270,9 +354,9 @@ const Login = (prop: any) => {
                       label="password"
                       variant="standard"
                       type="password"
-                      value={password}
-                      onChange={(e) => updatePassword(e.target.value)}
+                      onChange={(e) => updatePasswordValue(e)}
                       fullWidth
+                      defaultValue={prop.pers[2]}
                       autoFocus
                       required
                       error={passwordValidation}
@@ -314,8 +398,8 @@ const Login = (prop: any) => {
                 <Grid container justify="center" style={{ marginTop: "10px" }}>
                   <Button
                     onClick={() => {
-                      signin();
                       validate();
+                      signin();
                     }}
                     variant="outlined"
                     color="primary"
@@ -339,6 +423,9 @@ const Login = (prop: any) => {
                       <br />
                       <Divider />
                       <ForgotPassword
+                        updateEmail={updateEmail}
+                        updateCompany={updateCompany}
+                        submitForgetHandler={submitForgetHandler}
                         updateShowEnterCode={updateShowEnterCode}
                       />
                     </>
@@ -349,6 +436,7 @@ const Login = (prop: any) => {
                       <ForgotMailSent
                         updateShowEnterCode={updateShowEnterCode}
                         moveToChangePassowrd={moveToChangePassowrd}
+                        submitForgetHandler={submitForgetHandler}
                       />
                     </>
                   )
@@ -360,7 +448,7 @@ const Login = (prop: any) => {
           </Grid>
         </Grid>
       </Container>
-    </>
+    </div>
   );
 };
 
