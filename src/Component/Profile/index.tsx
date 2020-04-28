@@ -5,6 +5,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 import admin from "../../Assets/icons8-microsoft-admin-50.png";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import { SET } from "../../Redux/Action/action";
 import { connect } from "react-redux";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 const useStyles = makeStyles({
@@ -36,6 +37,7 @@ const useStyles = makeStyles({
 
 const Profile = (prop: any) => {
   const classes = useStyles();
+
   // calling fetch function to  fetch user from db and store it im local storage
   // fetch will be called once the user access the profile page
   //  later it will be stored in states and localstorage
@@ -45,6 +47,7 @@ const Profile = (prop: any) => {
       sessionStorage.setItem("fetch", "true");
       prop.fetchData();
     }
+    console.log(prop.Admin);
   }, [prop.Admin]);
   return (
     <Card className={classes.root} variant="outlined">
@@ -61,7 +64,7 @@ const Profile = (prop: any) => {
             {prop.user["name"]}
           </Typography>
 
-          {prop.Admin !== "true" ? (
+          {prop.Admin ? (
             <div className={classes.logo}>
               <img src={admin} alt="admin" />
               <p className={classes.logTag}>Admin</p>
@@ -75,6 +78,10 @@ const Profile = (prop: any) => {
         </div>
         <Typography className={classes.pos} color="textSecondary">
           {prop.user["email"]}
+          <br />
+        </Typography>{" "}
+        <Typography className={classes.pos} color="textSecondary">
+          {prop.user["id"]}
           <br />
         </Typography>
         <Typography variant="h5" component="h2">

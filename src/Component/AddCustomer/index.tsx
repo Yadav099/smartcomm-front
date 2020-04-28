@@ -11,7 +11,6 @@ import {
   TextField,
   Button,
   FormControlLabel,
-  Collapse,
   Switch,
   Typography,
   makeStyles,
@@ -20,8 +19,6 @@ import {
 } from "@material-ui/core";
 import { Table, Col, Row } from "react-bootstrap";
 
-// components and constants
-import { Fileds } from "../../Constant/Constant";
 import Notification from "../Notification/index";
 
 // validator
@@ -33,12 +30,15 @@ import {
 
 // icons
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    textwrapper: { position: "relative", margin: "10px" },
+    mainWrapper: { height: "18em" },
+    textwrapper: {
+      position: "relative",
+      margin: "10px",
+      height: "fit-content",
+    },
     textField: {
       width: "5300px",
       marginTop: "1em",
@@ -69,6 +69,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: "1em",
       width: "fit-content",
       float: "right",
+      padding: "1em",
     },
     employeesTable: { width: "100%", marginTop: "5em" },
     deleteIcon: {
@@ -91,12 +92,9 @@ const useStyles = makeStyles((theme: Theme) =>
 export const AddCustomer = () => {
   // set persistency
 
-  var data: any;
   const classes = useStyles();
-  data = JSON.parse(sessionStorage.getItem("newEmployee") || "{}");
-  const [name, setName] = React.useState(data[0]);
-  const [id, setId] = React.useState(data[1]);
-  const [email, setEmail] = React.useState(data[2]);
+
+  const [email, setEmail] = React.useState("");
   const [admin, setAdmin] = React.useState(false);
   const [notification, setNotification] = React.useState({
     state: false,
@@ -111,54 +109,19 @@ export const AddCustomer = () => {
   const [checked, setChecked] = React.useState(false);
 
   // error setting state
-  const [error, setError] = React.useState([false, false, false]);
+  const [error, setError] = React.useState(false);
 
   // gets employee and set employees every time component is rendered
   React.useEffect(() => {
     getEmployees();
-    wipePersistent();
-    const data = { 0: name, 1: id, 2: email };
-    sessionStorage.setItem("newEmployee", JSON.stringify(data));
   }, []);
-  if (
-    JSON.parse(sessionStorage.getItem("newEmployee") || "{}") !==
-    (undefined || null)
-  ) {
-    data = JSON.parse(sessionStorage.getItem("newEmployee") || "{}");
-  } else {
-    data = ["", "", ""];
-  }
-  const handleDataChange = (data: any, e: any) => {
-    if (data === "User Name") {
-      setName(e.target.value);
-      console.log(name);
-    }
-    if (data === "Employee Id") {
-      setId(e.target.value);
-      console.log(id);
-    }
-    if (data === "Email-ID") {
-      setEmail(e.target.value);
-      console.log(email);
-    }
-    setPersistent();
-  };
-
-  const setPersistent = () => {
-    const data = { 0: name, 1: id, 2: email };
-    sessionStorage.setItem("newEmployee", JSON.stringify(data));
-  };
-  const wipePersistent = () => {
-    const data = { 1: "", 0: "", 2: "" };
-    sessionStorage.setItem("newEmployee", JSON.stringify(data));
+  const handleDataChange = (e: any) => {
+    setEmail(e.target.value);
+    console.log(email);
   };
 
   const checkError = () => {
-    setError([
-      validateCompanyName(name),
-      validatePssword(id),
-      validateEmployeeEmail(email),
-    ]);
+    setError(validateEmployeeEmail(email));
   };
 
   const handleChange = () => {
@@ -167,62 +130,47 @@ export const AddCustomer = () => {
 
   // function to send new users to server
   const sendFile = (event: any) => {
-    if (email !== undefined && name !== undefined && id !== undefined) {
-      checkError();
+    console.log(error);
+    checkError();
+    var data: any = "";
+    if (!error && localStorage.getItem("token")) {
+      data = localStorage.getItem("token");
+      console.log(data);
+      axios
+        .post(URL_LINK + "customer/addnewemployee", {
+          employeeMail: email,
+          admin: admin,
+        })
+        .then(function (response) {
+          if (response.status === 200) {
+            if (response.data === "Successful") {
+              getEmployees();
 
-      console.log(error);
-      var data: any = "";
-      if (
-        !error[0] &&
-        !error[1] &&
-        !error[2] &&
-        localStorage.getItem("token")
-      ) {
-        data = localStorage.getItem("token");
-        console.log(data);
-        axios
-          .post(URL_LINK + "customer/addemployee", {
-            employeeName: name,
-            employeeId: id,
-            employeeMail: email,
-            admin: admin,
-          })
-          .then(function (response) {
-            if (response.status === 200) {
-              if (response.data === "Successful") {
-                getEmployees();
-                wipePersistent();
-                setChecked((prev) => !prev);
-                setNotification({
-                  state: true,
-                  response: true,
-                  message: "Employee is sucessfully added",
-                });
-              } else {
-                setNotification({
-                  state: true,
-                  response: false,
-                  message: response.data,
-                });
-                console.log(response.data, response.status);
-              }
+              setChecked((prev) => !prev);
+              setNotification({
+                state: true,
+                response: true,
+                message: "Employee is sucessfully added",
+              });
+            } else {
+              setNotification({
+                state: true,
+                response: false,
+                message: response.data,
+              });
+              console.log(response.data, response.status);
             }
-            console.log(notification);
-          })
-          .catch(function (error) {
-            setNotification({
-              state: true,
-              response: false,
-              message: error.data,
-            });
+          }
+          console.log(notification);
+        })
+        .catch(function (error) {
+          setNotification({
+            state: true,
+            response: false,
+            message: error.data,
           });
-      }
-    } else
-      setNotification({
-        state: true,
-        response: false,
-        message: "Enter valid data",
-      });
+        });
+    }
   };
 
   // function to send employee data to delete them from database
@@ -268,6 +216,7 @@ export const AddCustomer = () => {
                     <td>{count++}</td>
                     <td>{data["name"]}</td>
                     <td>{data["mail"]}</td>
+                    <td>{data["id"]}</td>
                     <td>
                       {" "}
                       {data["admin"] ? (
@@ -317,98 +266,78 @@ export const AddCustomer = () => {
   };
   return (
     <div>
-      <Paper>
+      <Paper className={classes.mainWrapper}>
         <Typography
           variant="h5"
           className={classes.Heading}
           onClick={handleChange}
         >
           Add new user
-          <FormControlLabel
-            onClick={handleChange}
-            control={
-              checked ? (
-                <KeyboardArrowUpIcon
-                  onClick={handleChange}
-                  className={classes.icon}
-                ></KeyboardArrowUpIcon>
-              ) : (
-                <KeyboardArrowDownIcon
-                  className={classes.icon}
-                  onClick={handleChange}
-                />
-              )
-            }
-            label=""
-            className={classes.icon}
-          />
         </Typography>
-        <Collapse in={checked}>
-          <div className={classes.textwrapper}>
-            {Fileds.map((text, index) => (
-              <Row className="justify-content-md-center">
-                <Col className={classes.FieldName}>
-                  <Typography>{text}:</Typography>
-                </Col>
-                <Col className={classes.textField}>
-                  <TextField
-                    id="outlined-basic"
-                    label={text}
-                    error={error[index]}
-                    defaultValue={data[index]}
-                    variant="standard"
-                    onChange={(e) => {
-                      handleDataChange(text, e);
-                    }}
-                  />
-                </Col>
-              </Row>
-            ))}
-            <Row className={classes.switch}>
-              <FormControlLabel
-                value="end"
-                control={
-                  <Switch color="primary" onChange={() => setAdmin(!admin)} />
-                }
-                label="Admin"
-                labelPlacement="end"
+
+        <div className={classes.textwrapper}>
+          <Row className="justify-content-md-center">
+            <Col className={classes.FieldName}>
+              <Typography>Email-id:</Typography>
+            </Col>
+            <Col className={classes.textField}>
+              <TextField
+                id="outlined-basic"
+                label="Email id"
+                error={error}
+                variant="standard"
+                onChange={(e) => {
+                  handleDataChange(e);
+                }}
               />
-            </Row>
-          </div>
-          \
-          <div className={classes.buttonWrapper}>
-            <Button
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={(event) => {
-                sendFile(event);
-              }}
-            >
-              submit
-            </Button>{" "}
-            {notification["state"] ? (
-              <Notification
-                state={notification["state"]}
-                message={notification["message"]}
-                response={notification["response"]}
-              />
-            ) : (
-              <></>
-            )}
-          </div>
-          <br />
-          <br />
-        </Collapse>
+            </Col>
+          </Row>
+
+          <Row className={classes.switch}>
+            <FormControlLabel
+              value="end"
+              control={
+                <Switch color="primary" onChange={() => setAdmin(!admin)} />
+              }
+              label="Admin"
+              labelPlacement="end"
+            />
+          </Row>
+        </div>
+
+        <div className={classes.buttonWrapper}>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={(event) => {
+              sendFile(event);
+            }}
+          >
+            submit
+          </Button>{" "}
+          {notification["state"] ? (
+            <Notification
+              state={notification["state"]}
+              message={notification["message"]}
+              response={notification["response"]}
+            />
+          ) : (
+            <></>
+          )}
+        </div>
+        <br />
+        <br />
       </Paper>
 
       <Paper className={classes.employeesTable}>
-        <Table size="small" responsive>
+        <Table striped bordered hover size="large" responsive>
           <thead>
             <tr>
               <th>ID</th>
               <th>Employee name</th>
               <th>Employee email</th>
+              <th>Employee id </th>
               <th>Authorization</th>
             </tr>
           </thead>

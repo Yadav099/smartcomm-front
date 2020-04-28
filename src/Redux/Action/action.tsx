@@ -7,7 +7,7 @@ export const Set = () => {
   if (localStorage.getItem("token")) {
     data = localStorage.getItem("token");
     data = JSON.parse(data);
-
+    console.log(data["admin"] + "kjgkj");
     return {
       type: "SET",
       admin: data["admin"],

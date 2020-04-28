@@ -1,4 +1,6 @@
 .app-bar {
-  background-color: #45398b !important;
+  // background-color: #45398b !important;
+  background-color: inherit;
   height: 80px;
+  user-select: none;
 }

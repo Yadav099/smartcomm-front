@@ -1,74 +1,108 @@
-import React from "react";
-import "./main.scss";
+import React, { Component } from "react";
+import { render } from "react-dom";
+import { URL_LINK } from "../../Constant/Constant";
+import axios from "axios";
+import { EditorState } from "draft-js";
 
-import TextareaAutosize from "@material-ui/core/TextareaAutosize";
-import {
-  Button,
-  FormControl,
-  Container,
-  Paper,
-  Divider,
-  Typography,
-  FormLabel
-} from "@material-ui/core";
-import SendIcon from "@material-ui/icons/Send";
-import Filter from "../Filters";
-import { Media } from "react-bootstrap";
-//Email interface
-interface IEmail {
-  send: (filter: number, content: string) => void;
-}
+import EmailEditor from "react-email-editor";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { makeStyles, createStyles, Button } from "@material-ui/core";
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      "@media (max-width:600px)": {
+        display: "none",
+        width: "fit-content",
+        margin: "0 ",
+      },
+    },
+    button: { float: "right", marginRight: "3em", marginTop: "1em" },
+    editor: {
+      display: "none",
+      border: "1px solid black",
+      margin: "0 ",
+      height: "fit-content",
+      "@media (max-width:600px)": {
+        display: "block",
+      },
+    },
+  })
+);
+const MyEditor = () => {
+  const classes = useStyles();
+  const [body, setBody] = React.useState("");
 
-//EmailEditor component
-const EmailEditor = (prop: IEmail) => {
-  //setting the filter
-  const [filter, setFilter] = React.useState(0);
-
-  //function to set filter
-  const selectFilter = (index: number) => {
-    setFilter(index);
+  const updateBody = (event: any) => {
+    setBody(event.blocks[0].text);
   };
-  //state to set email content
-  const [emailContent, setEmailContent] = React.useState("");
+  var data: any;
+  const exportHtml = (data: any) => {
+    data.exportHtml((value: any) => {
+      const { design, html } = value;
+      console.log("exportHtml", html);
+      console.log(design);
+      sendMail(html);
+    });
+  };
 
-  //function to set state of email content on change
-  const emailBody = (event: any) => {
-    setEmailContent(event.target.value);
+  const sendBody = () => {
+    sendMail(body);
+  };
+  const sendMail = (form: any) => {
+    axios
+      .post(URL_LINK + "mail", {
+        form: form,
+      })
+      .then(function (response) {
+        if (response.status === 200) {
+          console.log(response.data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
   return (
-    <Paper className="emailComponent" square>
-      <FormControl className="textAreaWrapper">
-        <Filter selectFilter={selectFilter} />
-        <Divider />
-
-        <FormLabel className="email_label" style={{ fontSize: "2em" }}>
-          Email template
-        </FormLabel>
-        <TextareaAutosize
-          rowsMax={200}
-          style={{ height: "30em", width: "80em", fontSize: "16px" }}
-          className="textArea"
-          aria-label="maximum height"
-          onChange={value => {
-            emailBody(value);
-          }}
-          onKeyDown={value => emailBody(value)}
+    <>
+      <div>
+        <div className={classes.root}>
+          <EmailEditor ref={(editor) => (data = editor)} />
+          <div>
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              className={classes.button}
+              onClick={() => exportHtml(data)}
+            >
+              Send
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div className={classes.editor}>
+        <Editor
+          editorStyle={{ width: "100%", height: "30em" }}
+          toolbarClassName="toolbarClassName"
+          wrapperClassName="wrapperClassName"
+          editorClassName="editorClassName"
+          onChange={(e) => updateBody(e)}
         />
-        <Container className="buttonWrapper">
+        <div>
           <Button
             variant="contained"
-            color="primary"
             size="large"
-            onClick={() => {
-              prop.send(filter, emailContent);
-            }}
+            color="primary"
+            className={classes.button}
+            onClick={() => sendBody()}
           >
-            <b className="submitLabel">Send</b>
-            <SendIcon />
+            Send
           </Button>
-        </Container>
-      </FormControl>
-    </Paper>
+        </div>
+      </div>
+    </>
   );
 };
-export default EmailEditor;
+
+export default MyEditor;

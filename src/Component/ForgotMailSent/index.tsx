@@ -11,6 +11,7 @@ import { Row, Col } from "react-bootstrap";
 interface Iverify {
   moveToChangePassowrd: () => void;
   updateShowEnterCode: () => void;
+  submitForgetHandler: (state: boolean) => void;
 }
 const ForgotMailSent = (prop: Iverify) => {
   const [otp, setOtp] = React.useState("");
@@ -37,13 +38,11 @@ const ForgotMailSent = (prop: Iverify) => {
     <div className="forgot-wrapper">
       <Row>
         <Col>
-          <Typography variant="h5" style={{ color: "green" }}>
-            Verify code
-          </Typography>
+          <h5>Verify code</h5>
         </Col>
         <Col>
           <Typography
-            style={{ color: "orange" }}
+            style={{ cursor: "pointer", color: "orange" }}
             onClick={() => {
               prop.updateShowEnterCode();
             }}
@@ -52,7 +51,12 @@ const ForgotMailSent = (prop: Iverify) => {
           </Typography>
         </Col>
         <Col>
-          <Typography style={{ color: "orange" }} onClick={() => {}}>
+          <Typography
+            style={{ cursor: "pointer", color: "orange" }}
+            onClick={() => {
+              prop.submitForgetHandler(false);
+            }}
+          >
             Re-send
           </Typography>
         </Col>

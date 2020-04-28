@@ -16,8 +16,9 @@ export const FetchUser = () => {
             admin: response.data["admin"],
             companyEmail: response.data["companyEmail"],
             company: response.data["company"],
+            id: response.data["id"],
           };
-
+          console.log(data);
           const Cryptr = require("cryptr");
           const cryptr = new Cryptr("myTotalySecretKey");
           localStorage.setItem(
@@ -27,7 +28,7 @@ export const FetchUser = () => {
         }
       })
       .catch(function (error) {
-        return error.data["Error"];
+        return "No connection";
       });
   }
 };

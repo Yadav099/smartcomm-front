@@ -9,34 +9,11 @@ import { URL_LINK } from "../../Constant/Constant";
 import axios from "axios";
 interface IForgotPass {
   updateShowEnterCode: () => void;
+  updateEmail: (e: any) => void;
+  updateCompany: (e: any) => void;
+  submitForgetHandler: (state: boolean) => void;
 }
 const ForgotPassword = (prop: IForgotPass) => {
-  const [employeeMail, updateEmployeeEmail] = React.useState("");
-  const updateEmail = (event: any) => {
-    updateEmployeeEmail(event.target.value);
-  };
-  const [company, setCompany] = React.useState("");
-  const updateCompany = (event: any) => {
-    setCompany(event.target.value);
-  };
-
-  const submitHandler = () => {
-    prop.updateShowEnterCode();
-    axios
-      .post(URL_LINK + "ForgotPassword ", {
-        emp_email: employeeMail,
-        emp_company: company,
-      })
-      .then(function (response) {
-        alert(response.data);
-        if (response.status === 200 && response.data === "Success") {
-          alert(response.data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
   return (
     <Container className="forgot-wrapper">
       <Row>
@@ -50,7 +27,7 @@ const ForgotPassword = (prop: IForgotPass) => {
           autoFocus
           required
           fullWidth
-          onChange={(event) => updateEmail(event)}
+          onChange={(event) => prop.updateEmail(event)}
         />
       </Row>
       <br />
@@ -62,7 +39,7 @@ const ForgotPassword = (prop: IForgotPass) => {
           autoFocus
           required
           fullWidth
-          onChange={(event) => updateCompany(event)}
+          onChange={(event) => prop.updateCompany(event)}
         />
       </Row>
       <Grid container justify="center" style={{ marginTop: "10px" }}>
@@ -71,7 +48,7 @@ const ForgotPassword = (prop: IForgotPass) => {
           color="primary"
           style={{ textTransform: "none" }}
           onClick={() => {
-            submitHandler();
+            prop.submitForgetHandler(true);
           }}
         >
           Submit

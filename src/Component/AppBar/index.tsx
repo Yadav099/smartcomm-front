@@ -5,28 +5,92 @@ import {
   Typography,
   createStyles,
   makeStyles,
+  Button,
+  Theme,
+  Toolbar,
+  IconButton,
 } from "@material-ui/core";
+import AccountCircleRoundedIcon from "@material-ui/icons/AccountCircleRounded";
+import Background from "../../Assets/background.jpg";
 
-const useStyles = makeStyles(() =>
+import { Link } from "react-router-dom";
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    appbar: {
-      backgroundColor: "#45398b",
-      height: "80px",
-      position: "static",
+    root: {
+      flexGrow: 1,
+      backgroundColor: "inherit",
       marginBottom: "1em",
+      backgroundImage: `url(${Background})`,
     },
-    title: { margin: "auto" },
+    menuButton: {
+      marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
+      userSelect: "none",
+      color: "#ededd",
+      fontWeight: "bold",
+      textAlign: "center",
+    },
+    button: {},
   })
 );
-const TopBar = () => {
+const TopBar = (prop: any) => {
   const classes = useStyles();
+  const [login, setLogin] = React.useState(false);
+  const [state, setState] = React.useState(false);
 
+  const isLoggediN = () => {
+    return localStorage.getItem("isLoggedIn");
+  };
+
+  const Logout = () => {
+    prop.func();
+  };
+
+  React.useEffect(() =>
+    isLoggediN() === "true" ? setLogin(true) : setLogin(false)
+  );
   return (
-    <AppBar className={classes.appbar}>
-      <Typography variant="h4" className={classes.title}>
-        Smart comm
-      </Typography>
+    <AppBar className={classes.root}>
+      <Toolbar>
+        <Typography variant="h3" className={classes.title}>
+          Smart-Comm
+        </Typography>
+        {login ? (
+          <>
+            {" "}
+            <Link to="/home">
+              <IconButton
+                edge="start"
+                className={classes.menuButton}
+                color="inherit"
+                aria-label="menu"
+              >
+                <AccountCircleRoundedIcon />
+              </IconButton>
+            </Link>
+            <Button onClick={Logout} color="inherit">
+              Logout
+            </Button>
+          </>
+        ) : (
+          <></>
+        )}
+      </Toolbar>
     </AppBar>
   );
 };
 export default TopBar;
+
+// appbar: {
+//   backgroundColor: "#45398b",
+//   height: "80px",
+//   position: "static",
+//   marginBottom: "1em",
+// },
+// title: { margin: "auto" },
+// button: {
+//   width: "fit-content",
+//   marginRight: "auto",
+// },

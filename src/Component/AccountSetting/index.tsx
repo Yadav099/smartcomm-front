@@ -78,9 +78,6 @@ const AccountSetting = () => {
       <TabPanel value={value} index={1}>
         <UserPasswordChange />
       </TabPanel>
-      <TabPanel value={value} index={2}>
-        Item Three
-      </TabPanel>
     </Container>
   );
 };
