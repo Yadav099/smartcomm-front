@@ -114,9 +114,6 @@ const Home = (prop: any) => {
       .post(URL_LINK + "viewpicture")
       .then(function (response: any) {
         console.log(response);
-        var base64 = Buffer.from(data).toString("base64");
-        buffer = "data:image/jpg;base64," + base64;
-        setData(buffer);
       })
       .catch(function (error) {
         console.log("no");
