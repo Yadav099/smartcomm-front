@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import DashboardRoundedIcon from "@material-ui/icons/DashboardRounded";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import axios from "axios";
 
 import { Set } from "../../Redux/Action/action";
 // import of icons layouts from material ui
@@ -16,7 +17,7 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
-import { Container } from "react-bootstrap";
+import { Container, Image } from "react-bootstrap";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Drawer from "@material-ui/core/Drawer";
 import Hidden from "@material-ui/core/Hidden";
@@ -37,6 +38,7 @@ import Filter from "../../Component/Filters/index";
 import AccountSetting from "../../Component/AccountSetting/index";
 import Profile from "../../Component/Profile/index";
 import CustomerFileUploader from "../../Component/CustomerFileUploader/index";
+import { URL_LINK } from "../../Constant/Constant";
 
 const drawerWidth = 260;
 
@@ -90,6 +92,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = (prop: any) => {
   const { history } = prop;
+  var x: any;
   const { dispatch } = prop;
   React.useEffect(() => {
     sessionStorage.setItem("fetch", "false");
@@ -100,8 +103,26 @@ const Home = (prop: any) => {
 
     if (loggedin() !== "true") history.push("/Login");
     dispatch(Set());
+    getPicture();
   }, [history]);
 
+  //profile picture display fetch api
+  const [data, setData] = React.useState("");
+  var x: any;
+  const getPicture = () => {
+    axios
+      .post(URL_LINK + "viewpicture")
+      .then(function (response: any) {
+        console.log(response);
+        var base64 = Buffer.from(data).toString("base64");
+        buffer = "data:image/jpg;base64," + base64;
+        setData(buffer);
+      })
+      .catch(function (error) {
+        console.log("no");
+      });
+    console.log("sd");
+  };
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(4);
@@ -349,9 +370,11 @@ const Home = (prop: any) => {
             accountSetting={accountSetting}
             user={user}
             fetchData={fetchData}
+            data={data}
           />
         )}
         {value === 5 && <CustomerFileUploader />}
+        <Image src={data} width="100%" alt="img" />
       </Container>
     </Container>
   );
