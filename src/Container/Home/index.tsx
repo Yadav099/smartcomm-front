@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import DashboardRoundedIcon from "@material-ui/icons/DashboardRounded";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import axios from "axios";
 
 import { Set } from "../../Redux/Action/action";
 // import of icons layouts from material ui
@@ -103,23 +102,8 @@ const Home = (prop: any) => {
 
     if (loggedin() !== "true") history.push("/Login");
     dispatch(Set());
-    getPicture();
   }, [history]);
 
-  //profile picture display fetch api
-  const [data, setData] = React.useState("");
-  var x: any;
-  const getPicture = () => {
-    axios
-      .post(URL_LINK + "viewpicture")
-      .then(function (response: any) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log("no");
-      });
-    console.log("sd");
-  };
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(4);
@@ -133,7 +117,6 @@ const Home = (prop: any) => {
   });
 
   const loggedin = () => {
-    isLoggediN();
     return localStorage.getItem("isLoggedIn");
   };
 
@@ -142,23 +125,19 @@ const Home = (prop: any) => {
     setMobileOpen(!mobileOpen);
   }
 
-  const send = () => {
-    setValue(1);
-    console.log(value);
-  };
   const employee = () => {
     setValue(2);
     console.log(value);
   };
   const Logout = () => {
     console.log(value);
-
-    localStorage.setItem("isLoggedIn", "false");
+    localStorage.clear();
+    // localStorage.setItem("isLoggedIn", "false");
     history.push("/Login");
-    localStorage.removeItem("UserDetails");
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("fetch");
-    sessionStorage.removeItem("newEmployee");
+    // localStorage.removeItem("UserDetails");
+    // localStorage.removeItem("token");
+    // sessionStorage.removeItem("fetch");
+    // sessionStorage.removeItem("newEmployee");
   };
 
   const accountSetting = () => {
@@ -367,11 +346,9 @@ const Home = (prop: any) => {
             accountSetting={accountSetting}
             user={user}
             fetchData={fetchData}
-            data={data}
           />
         )}
         {value === 5 && <CustomerFileUploader />}
-        <Image src={data} width="100%" alt="img" />
       </Container>
     </Container>
   );

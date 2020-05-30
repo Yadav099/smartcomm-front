@@ -81,11 +81,12 @@ export const Signup = (prop: any) => {
       response: false,
       message: "",
     });
+    console.log(dontSend);
     if (
-      !companyValidation &&
-      !employeeNameValidation &&
-      !emailValidation &&
-      !companyEmailValidation
+      !validateEmployeeEmail(employeeMail) &&
+      !validateEmployeeEmail(companyMail) &&
+      !validateCompanyName(companyName) &&
+      !validateCompanyName(employeeName)
     ) {
       setNotification({
         state: false,
@@ -152,6 +153,26 @@ export const Signup = (prop: any) => {
   const [employeeNameValidation, setEmployeeNameValidation] = React.useState(
     false
   );
+  var dontSend = true;
+  React.useEffect(() => {
+    console.log(
+      emailValidation,
+      companyEmailValidation,
+      emailValidation,
+      employeeNameValidation
+    );
+    checkError();
+  });
+  const checkError = () => {
+    if (
+      !companyValidation &&
+      !employeeNameValidation &&
+      !emailValidation &&
+      !companyEmailValidation
+    )
+      dontSend = true;
+    else dontSend = false;
+  };
 
   const validate = () => {
     //  employee email
@@ -232,8 +253,8 @@ export const Signup = (prop: any) => {
           <Row>
             <Button
               onClick={() => {
-                signup();
                 validate();
+                signup();
                 setNotification({
                   state: false,
                   response: false,
@@ -260,7 +281,7 @@ export const Signup = (prop: any) => {
             )}
           </Row>
           <br />
-          <Link style={{ margin: "auto" }} to="/">
+          <Link style={{ margin: "auto" }} to="/login">
             Already a user
           </Link>
         </Container>

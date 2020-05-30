@@ -15,8 +15,11 @@ export const isLoggediN = () => {
         Authorization: token,
       })
       .then(function (response) {
+        const output = response.data["isLoggedIn"];
+
         if (response.status === 200) {
-          const output = response.data["isLoggedIn"];
+          if (output === "false") localStorage.clear();
+
           localStorage.setItem("isLoggedIn", output);
           localStorage.setItem("isAdmin", admin);
         }

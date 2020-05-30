@@ -1,4 +1,6 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
+
 import "./main.scss";
 import {
   AppBar,
@@ -30,6 +32,9 @@ const useStyles = makeStyles((theme: Theme) =>
       userSelect: "none",
       color: "#ededd",
       fontWeight: "bold",
+
+      alignItems: "center",
+
       textAlign: "center",
     },
     button: {},
@@ -38,14 +43,15 @@ const useStyles = makeStyles((theme: Theme) =>
 const TopBar = (prop: any) => {
   const classes = useStyles();
   const [login, setLogin] = React.useState(false);
-  const [state, setState] = React.useState(false);
-
+  const history = useHistory();
   const isLoggediN = () => {
     return localStorage.getItem("isLoggedIn");
   };
 
   const Logout = () => {
-    prop.func();
+    history.push("/login");
+    localStorage.clear();
+    // prop.func();
   };
 
   React.useEffect(() =>
@@ -54,7 +60,7 @@ const TopBar = (prop: any) => {
   return (
     <AppBar className={classes.root}>
       <Toolbar>
-        <Typography variant="h3" className={classes.title}>
+        <Typography variant="h4" className={classes.title}>
           Smart-Comm
         </Typography>
         {login ? (

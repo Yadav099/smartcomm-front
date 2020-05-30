@@ -8,6 +8,8 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import { SET } from "../../Redux/Action/action";
 import { connect } from "react-redux";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import axios from "axios";
+import { URL_LINK } from "../../Constant/Constant";
 const useStyles = makeStyles({
   root: {
     minWidth: 275,
@@ -37,7 +39,8 @@ const useStyles = makeStyles({
 
 const Profile = (prop: any) => {
   const classes = useStyles();
-
+  const [picture, setPicture] = React.useState();
+  const [image, setImage] = React.useState(URL_LINK + "viewpicture");
   // calling fetch function to  fetch user from db and store it im local storage
   // fetch will be called once the user access the profile page
   //  later it will be stored in states and localstorage
@@ -47,8 +50,33 @@ const Profile = (prop: any) => {
       sessionStorage.setItem("fetch", "true");
       prop.fetchData();
     }
-    console.log(prop.Admin);
   }, [prop.Admin]);
+
+  const uploadPic = (event: any) => {
+    console.log(event.target.files);
+    setPicture(event.target.files[0]);
+    console.log(picture);
+
+    const data = event.target.files[0];
+    var formData = new FormData();
+    formData.append("image", data);
+    axios
+      .post(URL_LINK + "uploadprofilepic", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response: any) => {
+        setImage(URL_LINK + "viewpicture");
+        console.log(response.data);
+      })
+      .catch(function (error) {});
+    console.log(formData);
+  };
+  const inputFile = React.useRef<any>();
+  const fileUploader = () => {
+    inputFile.current.click();
+  };
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent>
@@ -64,6 +92,21 @@ const Profile = (prop: any) => {
             {prop.user["name"]}
           </Typography>
 
+          <input
+            type="file"
+            ref={inputFile}
+            style={{ display: "none" }}
+            onChange={(event) => uploadPic(event)}
+          />
+          <img
+            src={image}
+            style={{ float: "right", borderRadius: "2em" }}
+            width="80em"
+            height="80em"
+            alt="prfile"
+            onClick={() => fileUploader()}
+          />
+          {/* 
           {prop.Admin ? (
             <div className={classes.logo}>
               <img src={admin} alt="admin" />
@@ -74,7 +117,7 @@ const Profile = (prop: any) => {
               <AccountCircleIcon />
               <p>User</p>
             </div>
-          )}
+          )} */}
         </div>
         <Typography className={classes.pos} color="textSecondary">
           {prop.user["email"]}

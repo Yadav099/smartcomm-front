@@ -28,7 +28,7 @@ import TopBar from "../../Component/AppBar";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: { marginTop: "2em" },
+    root: { padding: "5em" },
     textwrapper: { position: "relative", margin: "10px" },
     textField: {
       width: "5300px",
@@ -188,7 +188,7 @@ const UserDetails = (prop: any) => {
             </Row>
           ))}
         </div>
-        \
+
         <div className={classes.buttonWrapper}>
           <Button
             variant="contained"

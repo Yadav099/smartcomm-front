@@ -3,25 +3,26 @@ import { render } from "react-dom";
 import { URL_LINK } from "../../Constant/Constant";
 import axios from "axios";
 import { EditorState } from "draft-js";
-
 import EmailEditor from "react-email-editor";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { makeStyles, createStyles, Button } from "@material-ui/core";
+import ConfirmationDialog from "../ConfirmationDialog";
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
+      marginLeft: "4em",
       "@media (max-width:600px)": {
         display: "none",
-        width: "fit-content",
+        width: "fit-content%",
         margin: "0 ",
       },
     },
-    button: { float: "right", marginRight: "3em", marginTop: "1em" },
+    button: { float: "right", marginRight: "19em", marginTop: "1em" },
     editor: {
       display: "none",
       border: "1px solid black",
-      margin: "0 ",
+      margin: "0",
       height: "fit-content",
       "@media (max-width:600px)": {
         display: "block",
@@ -29,10 +30,10 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-const MyEditor = () => {
+const MyEditor = (prop: any) => {
   const classes = useStyles();
   const [body, setBody] = React.useState("");
-
+  const [type, setType] = React.useState(1);
   const updateBody = (event: any) => {
     setBody(event.blocks[0].text);
   };
@@ -50,8 +51,9 @@ const MyEditor = () => {
     sendMail(body);
   };
   const sendMail = (form: any) => {
+    console.log(resp);
     axios
-      .post(URL_LINK + "mail", {
+      .post(URL_LINK + "mailBody", {
         form: form,
       })
       .then(function (response) {
@@ -62,19 +64,56 @@ const MyEditor = () => {
       .catch(function (error) {
         console.log(error);
       });
+    setResponse(false);
+  };
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const [resp, setResponse] = React.useState(false);
+  const handleResponse = (response: boolean) => {
+    console.log(type, response);
+    if (response) {
+      if (type === 1) exportHtml(data);
+
+      if (type === 2) sendBody();
+
+      prop.gotoMailData();
+    }
+    prop.setPersistent();
   };
   return (
     <>
-      <div>
+      <div style={{ width: "100%" }}>
         <div className={classes.root}>
-          <EmailEditor ref={(editor) => (data = editor)} />
+          {/* <EmailEditor ref={(editor) => (data = editor)} /> */}
+          <Editor
+            editorStyle={{
+              height: "30em",
+              border: "2px solid black",
+              width: "85%",
+              paddingLeft: "1em",
+            }}
+            toolbarClassName="toolbarClassName"
+            wrapperClassName="wrapperClassName"
+            editorClassName="editorClassName"
+            onChange={(e) => updateBody(e)}
+          />
           <div>
             <Button
               variant="contained"
               size="large"
               color="primary"
               className={classes.button}
-              onClick={() => exportHtml(data)}
+              onClick={() => {
+                handleClickOpen();
+                setType(2);
+              }}
             >
               Send
             </Button>
@@ -94,13 +133,22 @@ const MyEditor = () => {
             variant="contained"
             size="large"
             color="primary"
-            className={classes.button}
-            onClick={() => sendBody()}
+            style={{ float: "right", marginTop: "1em", marginRight: "2em" }}
+            onClick={() => {
+              handleClickOpen();
+              setType(2);
+            }}
           >
             Send
           </Button>
         </div>
       </div>
+      <ConfirmationDialog
+        open={open}
+        handleResponse={handleResponse}
+        text={"Are you sure to send mail if yes click on agree ?"}
+        handleClose={handleClose}
+      />
     </>
   );
 };

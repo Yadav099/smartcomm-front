@@ -31,11 +31,12 @@ const useStyles = makeStyles(() =>
       },
     },
     graphs: {
-      margin: "0 10em 3em 10em",
+      margin: "0 0em 3em 10em",
       display: "block",
-      width: "30em",
-      height: "25em",
+      width: "100%",
+      height: "100%",
       padingLeft: "10px",
+      paddingRight: "10px",
       touchAction: "manipulation",
       "@media (max-width:600px)": {
         width: "20em",
@@ -44,7 +45,11 @@ const useStyles = makeStyles(() =>
       },
     },
     wrapper: {
+      margin: "1em auto",
       display: "flex",
+      width: "fit-content",
+      border: "1px solid black",
+
       "@media (max-width:600px)": {
         flexDirection: "column",
       },
@@ -64,7 +69,6 @@ interface IVisualization {
 }
 const Datavisulization = (prop: IVisualization) => {
   const classes = useStyles();
-
   const [value, setValue] = React.useState(0);
   const [show, setShow] = React.useState([true, false, false, false]);
   const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
@@ -75,7 +79,20 @@ const Datavisulization = (prop: IVisualization) => {
       <div className={classes.root}>
         <div className={classes.wrapper}>
           <div className={classes.graphs}>
-            <VictoryChart
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Year Vs Number of clients
+            </h4>
+
+            {/* <VictoryChart
               theme={VictoryTheme.material}
               domainPadding={10}
               width={500}
@@ -87,20 +104,72 @@ const Datavisulization = (prop: IVisualization) => {
               }}
             >
               <VictoryBar
-                barWidth={5}
+                barWidth={7}
                 alignment="start"
-                data={prop.data}
+                data={prop.data["year"]}
                 style={{
                   data: {
-                    fill: "blue",
+                    fill: "#002C6A",
                   },
                 }}
               />
-            </VictoryChart>
+            </VictoryChart> */}
           </div>
           <br />
           <br />
+          {/* <div className={classes.graphs} style={{ marginTop: "2em" }}>
+            <VictoryChart
+              width={500}
+              height={500}
+              animate={{
+                duration: 2000,
+                onLoad: { duration: 1000 },
+              }}
+              theme={VictoryTheme.material}
+            >
+              <VictoryArea
+                style={{ data: { fill: "#76BCDC" } }}
+                interpolation="natural"
+                data={prop.data["year"]}
+              />
+            </VictoryChart>
+          </div> */}
+          <div></div>
+        </div>
+        <div className={classes.wrapper}>
           <div className={classes.graphs}>
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Male to Female ratio
+            </h4>
+            <VictoryPie
+              width={500}
+              colorScale={["#002C6A", "#76BCDC"]}
+              height={500}
+              data={prop.data["gender"]}
+            />
+          </div>
+          <div className={classes.graphs}>
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Number of people by Age group
+            </h4>
             <VictoryChart
               width={500}
               height={500}
@@ -110,7 +179,7 @@ const Datavisulization = (prop: IVisualization) => {
               }}
             >
               <VictoryGroup
-                data={prop.data}
+                data={prop.data["age"]}
                 style={{
                   data: {
                     fill: "#aaaaaa",
@@ -121,26 +190,7 @@ const Datavisulization = (prop: IVisualization) => {
                 <VictoryScatter />
               </VictoryGroup>
             </VictoryChart>
-          </div>
-          <div></div>
-        </div>
-        <div className={classes.wrapper}>
-          <div className={classes.graphs}>
-            <VictoryPie width={500} height={500} data={prop.data} />
-          </div>
-          <div className={classes.graphs}>
-            <VictoryChart
-              width={500}
-              height={500}
-              animate={{
-                duration: 2000,
-                onLoad: { duration: 1000 },
-              }}
-              theme={VictoryTheme.material}
-            >
-              <VictoryArea data={prop.data} />
-            </VictoryChart>
-          </div>
+          </div>{" "}
         </div>
       </div>
       <div className={classes.rootMob}>
@@ -170,7 +220,7 @@ const Datavisulization = (prop: IVisualization) => {
         </Tabs>
         {show[0] ? (
           <div className={classes.graphs}>
-            <VictoryChart
+            {/* <VictoryChart
               theme={VictoryTheme.material}
               domainPadding={10}
               width={500}
@@ -184,14 +234,26 @@ const Datavisulization = (prop: IVisualization) => {
               <VictoryBar
                 barWidth={5}
                 alignment="start"
-                data={prop.data}
+                data={prop.data["year"]}
                 style={{
                   data: {
-                    fill: "blue",
+                    fill: "#002C6A",
                   },
                 }}
               />
-            </VictoryChart>
+            </VictoryChart> */}
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Year Vs Number of clients
+            </h4>
           </div>
         ) : show[1] ? (
           <div className={classes.graphs}>
@@ -204,7 +266,7 @@ const Datavisulization = (prop: IVisualization) => {
               }}
             >
               <VictoryGroup
-                data={prop.data}
+                data={prop.data["age"]}
                 style={{
                   data: {
                     fill: "#aaaaaa",
@@ -214,15 +276,45 @@ const Datavisulization = (prop: IVisualization) => {
                 <VictoryLine />
                 <VictoryScatter />
               </VictoryGroup>
-            </VictoryChart>
+            </VictoryChart>{" "}
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Number of people by Age group
+            </h4>
           </div>
         ) : show[2] ? (
           <div className={classes.graphs}>
-            <VictoryPie width={500} height={500} data={prop.data} />
+            <VictoryPie
+              colorScale={["#002C6A", "#76BCDC"]}
+              width={500}
+              height={500}
+              data={prop.data["gender"]}
+            />
+
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Male to Female ratio
+            </h4>
           </div>
         ) : (
           <div className={classes.graphs}>
-            <VictoryChart
+            {/* <VictoryChart
               width={500}
               height={500}
               animate={{
@@ -231,8 +323,23 @@ const Datavisulization = (prop: IVisualization) => {
               }}
               theme={VictoryTheme.material}
             >
-              <VictoryArea data={prop.data} />
-            </VictoryChart>
+              <VictoryArea
+                style={{ data: { fill: "#76BCDC" } }}
+                data={prop.data["year"]}
+              />
+            </VictoryChart> */}
+            <h4
+              style={{
+                fontWeight: "bold",
+                padding: "0 10px",
+                color: "#4D545A",
+                fontFamily: "Calibri",
+                fontSize: 24,
+                paddingTop: "5px",
+              }}
+            >
+              Year Vs Number of clients
+            </h4>
           </div>
         )}
       </div>

@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { useHistory } from "react-router-dom";
 
 import { isLoggediN } from "../../Util/Authenticate";
 import { FetchUser } from "../../Util/FetchUser";
@@ -35,6 +36,7 @@ import TopBar from "../../Component/AppBar";
 import FilterLogo from "../../Assets/Filter.png";
 import MyEditor from "../../Component/EmailEditor";
 import Background from "../../Assets/background.jpg";
+import { isNullOrUndefined } from "util";
 
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
@@ -124,6 +126,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SelectFilter = (prop: any) => {
   var mainData: any = [];
+
   const reset = () => {
     dbFilter.forEach((text) => {
       data.push(false);
@@ -134,19 +137,24 @@ const SelectFilter = (prop: any) => {
     reset();
   }, []);
   React.useEffect(() => {
-    sendFilters();
+    if (prop.visualPers === undefined) sendFilters();
   }, [1]);
 
   const { history } = prop;
   const { dispatch } = prop;
+  let history2 = useHistory();
 
+  const gotoMailData = () => {
+    history2.push("/Useremail");
+  };
   const Logout = () => {
-    localStorage.setItem("isLoggedIn", "false");
+    // localStorage.setItem("isLoggedIn", "false");
+    localStorage.clear();
     history.push("/Login");
-    localStorage.removeItem("UserDetails");
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("fetch");
-    sessionStorage.removeItem("newEmployee");
+    // localStorage.removeItem("UserDetails");
+    // localStorage.removeItem("token");
+    // sessionStorage.removeItem("fetch");
+    // sessionStorage.removeItem("newEmployee");
   };
   React.useEffect(() => {
     sessionStorage.setItem("fetch", "false");
@@ -155,9 +163,9 @@ const SelectFilter = (prop: any) => {
 
     isLoggediN();
 
-    if (loggedin() !== "true") history.push("/Login");
+    if (loggedin() !== "true") history2.push("/Login");
     dispatch(Set());
-  }, [history]);
+  }, [history2]);
 
   const loggedin = () => {
     isLoggediN();
@@ -169,7 +177,8 @@ const SelectFilter = (prop: any) => {
   const [filterShow, setFilterShow] = React.useState(data);
   const [submit, setSubmit] = React.useState(false);
   const [customFilterSet, setCustomFilterSet] = React.useState(false);
-  const [responseData, setResponseData] = React.useState();
+  const [responseData, setResponseData] = React.useState(prop.visualPers);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -187,15 +196,14 @@ const SelectFilter = (prop: any) => {
   };
 
   const pushData = (data: any) => {
-    console.log(mainData);
-
     mainData.push(data);
     setSubmit(false);
 
     sendFilters();
     showChoosenFilter();
     setCustomFilterSet(true);
-    console.log(customFilter);
+    // console.log(customFilter);
+    console.log(mainData);
   };
   var customFilter: any;
   const showChoosenFilter = () => {
@@ -208,19 +216,35 @@ const SelectFilter = (prop: any) => {
       })
       .then(function (response) {
         if (response.status === 200) {
-          console.log(response.data);
           setResponseData(response.data["response"]);
+          sessionStorage.setItem(
+            "filter",
+            JSON.stringify(response.data["response"])
+          );
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+  // setting main data persistentce
+  const setPersistent = () => {
+    sessionStorage.setItem("filter", JSON.stringify(data, mainData));
+  };
+
+  React.useEffect(() => {
+    console.log(typeof responseData);
+  });
+
   return (
     <div className={classes.background}>
       <TopBar func={Logout} />
       <div>
-        <MyEditor />
+        <MyEditor
+          setPersistent={setPersistent}
+          gotoMailData={gotoMailData}
+          mainData={mainData}
+        />
       </div>
       <div>
         <Drawer

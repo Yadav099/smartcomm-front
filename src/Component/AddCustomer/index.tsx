@@ -30,6 +30,7 @@ import {
 
 // icons
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -109,19 +110,17 @@ export const AddCustomer = () => {
   const [checked, setChecked] = React.useState(false);
 
   // error setting state
-  const [error, setError] = React.useState(false);
-
+  const [err, setError] = React.useState(false);
+  var dontSend = true;
+  const [delData, setdelData] = React.useState(["", ""]);
   // gets employee and set employees every time component is rendered
   React.useEffect(() => {
     getEmployees();
   }, []);
+
   const handleDataChange = (e: any) => {
     setEmail(e.target.value);
     console.log(email);
-  };
-
-  const checkError = () => {
-    setError(validateEmployeeEmail(email));
   };
 
   const handleChange = () => {
@@ -130,10 +129,11 @@ export const AddCustomer = () => {
 
   // function to send new users to server
   const sendFile = (event: any) => {
-    console.log(error);
-    checkError();
+    console.log(err);
     var data: any = "";
-    if (!error && localStorage.getItem("token")) {
+    console.log(err);
+
+    if (!validateEmployeeEmail(email) && localStorage.getItem("token")) {
       data = localStorage.getItem("token");
       console.log(data);
       axios
@@ -145,7 +145,7 @@ export const AddCustomer = () => {
           if (response.status === 200) {
             if (response.data === "Successful") {
               getEmployees();
-
+              setEmail("");
               setChecked((prev) => !prev);
               setNotification({
                 state: true,
@@ -244,7 +244,9 @@ export const AddCustomer = () => {
                         <DeleteOutlineIcon
                           className={classes.deleteIcon}
                           onClick={() => {
-                            handleDelete(data["name"], data["mail"]);
+                            handleDelClickOpen();
+                            setdelData([data["name"], data["mail"]]);
+                            console.log(delData);
                           }}
                         />
                       ) : (
@@ -264,6 +266,40 @@ export const AddCustomer = () => {
         console.log(error);
       });
   };
+  var mailEvent: any;
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const [resp, setResponse] = React.useState(false);
+  const handleResponse = (response: boolean) => {
+    console.log(response);
+    if (response) {
+      sendFile(mailEvent);
+    } else setResponse(false);
+  };
+
+  const [delOpen, setdelOpen] = React.useState(false);
+
+  const handleDelClose = () => {
+    setdelOpen(false);
+  };
+
+  const handleDelClickOpen = () => {
+    setdelOpen(true);
+  };
+  const handleDelResponse = (response: boolean) => {
+    console.log(response, delData);
+
+    if (response) handleDelete(delData[0], delData[1]);
+  };
+
   return (
     <div>
       <Paper className={classes.mainWrapper}>
@@ -284,7 +320,7 @@ export const AddCustomer = () => {
               <TextField
                 id="outlined-basic"
                 label="Email id"
-                error={error}
+                error={err}
                 variant="standard"
                 onChange={(e) => {
                   handleDataChange(e);
@@ -311,7 +347,9 @@ export const AddCustomer = () => {
             color="primary"
             size="large"
             onClick={(event) => {
-              sendFile(event);
+              setError(validateEmployeeEmail(email));
+              handleClickOpen();
+              mailEvent = event;
             }}
           >
             submit
@@ -326,6 +364,19 @@ export const AddCustomer = () => {
             <></>
           )}
         </div>
+        <ConfirmationDialog
+          open={open}
+          handleResponse={handleResponse}
+          text={"Are you sure of adding new user ?"}
+          handleClose={handleClose}
+        />
+        <ConfirmationDialog
+          open={delOpen}
+          handleResponse={handleDelResponse}
+          text={"Are you sure of deletin the user ?"}
+          handleClose={handleDelClose}
+        />
+
         <br />
         <br />
       </Paper>

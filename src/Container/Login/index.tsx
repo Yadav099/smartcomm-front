@@ -107,7 +107,7 @@ const Login = (prop: any) => {
 
   // states for handling inputs
   const { dispatch } = prop;
-  data = JSON.parse(localStorage.getItem("loginData") || "{}");
+  data = JSON.parse(sessionStorage.getItem("loginData") || "{}");
 
   // const [companyName, updateCompanyName] = React.useState(data["companyName"]);
   // const [employeeMail, updateEmployeeEmail] = React.useState(data["userEmail"]);
@@ -146,7 +146,7 @@ const Login = (prop: any) => {
 
   // set up persistent from local storage to local states
   const remindData = () => {
-    const rememberData: any = localStorage.getItem("loginData");
+    const rememberData: any = sessionStorage.getItem("loginData");
     if (rememberData) {
       data = JSON.parse(rememberData);
       updateCompanyName(data["companyName"]);
@@ -228,7 +228,7 @@ const Login = (prop: any) => {
                   userEmail: employeeMail,
                   userPassword: cryptr.encrypt(password),
                 };
-                localStorage.setItem(
+                sessionStorage.setItem(
                   "loginData",
                   JSON.stringify(loginCredential)
                 );
@@ -239,7 +239,7 @@ const Login = (prop: any) => {
             setNotification({
               state: true,
               response: false,
-              message: "invalid email or password ",
+              message: response["data"]["error"],
             });
           }
         })
@@ -276,16 +276,10 @@ const Login = (prop: any) => {
         if (response.status === 200 && response.data === "Success") {
           setNotification({
             state: true,
-            response: false,
-            message:
-              "Verrification code sent if email id entered is registered",
+            response: true,
+            message: "Verrification code sent",
           });
         }
-        setNotification({
-          state: true,
-          response: false,
-          message: "Verrification code sent if email id entered is registered",
-        });
       })
       .catch(function (error) {
         setNotification({

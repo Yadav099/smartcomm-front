@@ -35,5 +35,5 @@ export const dbFilter = [
   { attribute: "customer_place", type: 0, name: "Place" },
   { attribute: "date", type: 3, name: "Date of registered" },
 ];
-export const URL_LINK = "http://127.0.0.1:5000/";
-// export const URL_LINK = "https://037117b7.ngrok.io/";
+// export const URL_LINK = "http://127.0.0.1:5000/";
+export const URL_LINK = "https://2b682732a983.ngrok.io/";

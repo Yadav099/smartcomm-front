@@ -25,6 +25,9 @@ export default function DialogPassword(prop: IChange) {
     setPassword(event.target.value);
   };
   const submit = () => {
+    // reset error
+    setError(!error);
+
     axios
       .post(URL_LINK + "ChangeEmail", {
         emp_email: prop.email,

@@ -42,8 +42,7 @@ const UserPasswordChange = () => {
   const [error, setError] = React.useState("");
   const [state, setState] = React.useState(true);
   const validate = () => {
-    if (oldPassword === "") setOld(true);
-    else setOld(false);
+    setOld(validatePssword(oldPassword));
     setPas(validatePssword(newPassword));
     setReNew(validatePssword(reNewPassword));
 
@@ -51,17 +50,28 @@ const UserPasswordChange = () => {
     if (newPassword !== reNewPassword) {
       setReNew(true);
       setError("Password donot match");
+      console.log(old, pas, reNew);
+      return false;
     }
     //if password is same as old
-    if (newPassword === oldPassword) {
+    if (newPassword === oldPassword && oldPassword !== "") {
       setPas(true);
 
       setError("New password entered is same as old password");
+      return false;
     }
+    console.log(old, pas, reNew);
+    return true;
   };
   const submitHandler = () => {
-    validate();
-    if (!pas && !old && !reNew) {
+    console.log(old, pas, reNew);
+
+    if (
+      validate() &&
+      !validatePssword(newPassword) &&
+      !validatePssword(reNewPassword) &&
+      !validatePssword(oldPassword)
+    ) {
       axios
         .put(URL_LINK + "ChangeProfilePassword", {
           emp_password: oldPassword,
@@ -70,14 +80,14 @@ const UserPasswordChange = () => {
         .then(function (response) {
           if (response.status === 200 && response.data === "success") {
             setState(false);
-            if (localStorage.getItem("loginData")) {
-              const Cryptr = require("cryptr");
-              const cryptr = new Cryptr("myTotalySecretKey");
-              var data: any = localStorage.getItem("loginData");
-              data = JSON.parse(data);
-              data["userPassword"] = cryptr.encrypt(newPassword);
-              localStorage.setItem("loginData", JSON.stringify(data));
-            }
+            // if (localStorage.getItem("loginData")) {
+            //   const Cryptr = require("cryptr");
+            //   const cryptr = new Cryptr("myTotalySecretKey");
+            //   var data: any = localStorage.getItem("loginData");
+            //   data = JSON.parse(data);
+            //   data["userPassword"] = cryptr.encrypt(newPassword);
+            //   localStorage.setItem("loginData", JSON.stringify(data));
+            // }
           }
         })
         .catch(function (error) {
