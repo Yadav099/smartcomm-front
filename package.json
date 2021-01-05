@@ -18,7 +18,7 @@
     "@types/react-email-editor": "^1.0.0",
     "@types/react-google-recaptcha": "^1.1.1",
     "@types/react-redux": "^7.1.7",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.4.1",
     "cryptr": "^6.0.2",
     "draft-js": "^0.11.5",
